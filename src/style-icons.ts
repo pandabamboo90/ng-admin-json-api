@@ -1,0 +1,43 @@
+// Custom icon static resources
+
+import {
+  ApartmentOutline,
+  BulbOutline,
+  CheckCircleFill,
+  CheckCircleTwoTone,
+  CheckOutline,
+  CloseCircleTwoTone,
+  ClusterOutline,
+  DollarCircleOutline,
+  ExceptionOutline,
+  ExclamationCircleFill,
+  FileSyncOutline,
+  InfoOutline,
+  LinkOutline,
+  ProfileOutline,
+  StopOutline,
+  TagsOutline,
+  TransactionOutline,
+  WalletOutline,
+} from '@ant-design/icons-angular/icons';
+
+export const ICONS = [
+  ApartmentOutline,
+  InfoOutline,
+  BulbOutline,
+  ProfileOutline,
+  ExceptionOutline,
+  ExclamationCircleFill,
+  LinkOutline,
+  CheckCircleFill,
+  TransactionOutline,
+  CheckOutline,
+  StopOutline,
+  FileSyncOutline,
+  DollarCircleOutline,
+  TagsOutline,
+  CheckCircleTwoTone,
+  CloseCircleTwoTone,
+  ClusterOutline,
+  WalletOutline,
+];

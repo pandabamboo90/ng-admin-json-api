@@ -1,0 +1,87 @@
+<page-header [title]="title"></page-header>
+
+<nz-card>
+    <div class="mb-xxl">
+        <button class="float-right" nz-button nzType="primary" (click)="submit()">確認</button>
+    </div>
+
+    <st #st
+        [data]="(data$ | async) || []"
+        [columns]="cols"
+        [loading]="loading"
+        [page]="{ show: false }"
+        expandAccordion
+        hrztal-scroll
+        bordered
+    >
+        <!-- Permissions for each Role -->
+        <ng-template st-row="permissionTpl" let-item let-idx="index">
+            <strong>{{ item?.title }}</strong>
+            <ul class="pt-sm pl-lg">
+                <li *ngFor="let perm of item?.permissions; let i = index; trackBy: trackByFn">
+                    {{ perm?.name }}
+                </li>
+            </ul>
+        </ng-template>
+
+        <!-- Wallet Admin -->
+        <ng-template st-row="walletCheckboxTpl" let-item let-idx="index">
+            <ul class="list-unstyled pl0 text-center">
+                <!--Checkbox All-->
+                <li>
+                    <label nz-checkbox
+                           [(ngModel)]="item.permissionsByRole.wallet_admin.all"
+                           (ngModelChange)="updateAllChecked(item, 'wallet_admin')"
+                           [nzIndeterminate]="updateIndeterminate(item, 'wallet_admin')">
+                    </label>
+                </li>
+                <li *ngFor="let perm of item?.permissionsByRole?.wallet_admin.data; let i = index; trackBy: trackByFn">
+                    <label nz-checkbox
+                           [(ngModel)]="perm[1]"
+                           (ngModelChange)="updateSingleChecked(item, 'wallet_admin')">
+                    </label>
+                </li>
+            </ul>
+        </ng-template>
+
+        <!-- Tenant Admin -->
+        <ng-template st-row="tenantCheckboxTpl" let-item let-idx="index">
+            <ul class="list-unstyled pl0 text-center">
+                <!--Checkbox All-->
+                <li>
+                    <label nz-checkbox
+                           [(ngModel)]="item.permissionsByRole.tenant_admin.all"
+                           (ngModelChange)="updateAllChecked(item, 'tenant_admin')"
+                           [nzIndeterminate]="updateIndeterminate(item, 'tenant_admin')">
+                    </label>
+                </li>
+                <li *ngFor="let perm of item?.permissionsByRole?.tenant_admin.data; let i = index; trackBy: trackByFn">
+                    <label nz-checkbox
+                           [(ngModel)]="perm[1]"
+                           (ngModelChange)="updateSingleChecked(item, 'tenant_admin')">
+                    </label>
+                </li>
+            </ul>
+        </ng-template>
+
+        <!-- User -->
+        <ng-template st-row="clientCheckboxTpl" let-item let-idx="index">
+            <ul class="list-unstyled pl0 text-center">
+                <!--Checkbox All-->
+                <li>
+                    <label nz-checkbox
+                           [(ngModel)]="item.permissionsByRole.client.all"
+                           (ngModelChange)="updateAllChecked(item, 'client')"
+                           [nzIndeterminate]="updateIndeterminate(item, 'client')">
+                    </label>
+                </li>
+                <li *ngFor="let perm of item?.permissionsByRole?.client.data; let i = index; trackBy: trackByFn">
+                    <label nz-checkbox
+                           [(ngModel)]="perm[1]"
+                           (ngModelChange)="updateSingleChecked(item, 'client')">
+                    </label>
+                </li>
+            </ul>
+        </ng-template>
+    </st>
+</nz-card>

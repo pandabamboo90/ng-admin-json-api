@@ -1,0 +1,26 @@
+<page-header [action]="phActionTpl">
+  <ng-template #phActionTpl>
+    <button [acl]="user.ability(entities, 'create')" nz-button nzType="primary" (click)="addNew()">
+      Add new Admin
+    </button>
+  </ng-template>
+</page-header>
+
+<nz-card>
+  <st #st
+      [data]="data"
+      [columns]="columns"
+      [pi]="meta.page"
+      [ps]="meta.per_page"
+      [total]="meta.total"
+      [page]="{ front: false }"
+      [loading]="loading"
+      [virtualForTrackBy]="trackByFn"
+      multiSort
+      hrztal-scroll
+  >
+    <ng-template st-row="wallets-cell-tpl" let-item let-idx="index">
+      <wallet-id [user]="item"></wallet-id>
+    </ng-template>
+  </st>
+</nz-card>

@@ -1,0 +1,39 @@
+<ng-container [ngSwitch]="use">
+    <ng-container *ngSwitchCase="'available'">
+        <ng-container *ngTemplateOutlet="defaultTpl"></ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'custom'">
+        <ng-container *ngTemplateOutlet="template"></ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'both'">
+        <ng-container *ngTemplateOutlet="defaultTpl"></ng-container>
+
+        <ng-container *ngTemplateOutlet="template"></ng-container>
+    </ng-container>
+</ng-container>
+
+<ng-template #defaultTpl>
+    <ul>
+        <li *ngFor="let wallet of wallets; trackBy: trackByFn">
+            <strong>ID: </strong>{{ wallet?.id }}<br>
+            <strong>Token: </strong>{{ wallet?.token }}<br>
+            <strong>Seed: </strong>{{ wallet?.seed }}<br>
+
+            <ng-container *ngIf="wallet?.cashes"><br>
+                <strong>Amount: <i nz-icon nzType="dollar-circle" nzTheme="outline"></i></strong><br>
+                <div class="d-flex flex-wrap">
+                    <ng-container *ngFor="let cash of wallet?.cashes; trackBy: trackByFn">
+                        <nz-tag *ngIf="cash"
+                                nzColor="geekblue"
+                                nz-tooltip
+                                nzTooltipTitle="{{ cash?.binary_cash }}">
+                            {{ cash.amount | number }} {{ cash.cash_type?.toUpperCase() }}
+                        </nz-tag>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </li>
+    </ul>
+</ng-template>

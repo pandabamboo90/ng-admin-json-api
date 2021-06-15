@@ -1,0 +1,308 @@
+<page-header [title]="title"></page-header>
+
+<nz-row [nzGutter]="24" class="py-lg">
+    <!-- Left -->
+    <nz-col [nzSpan]="6">
+        <nz-card nzTitle="Personal settings" class="ant-card__body-nopadding">
+            <a class="d-block py-sm px-md"
+               [ngClass]="{ 'bg-primary-light text-white': current === Tab.Profile }"
+               (click)="to(1)"
+            >
+                Profile
+            </a>
+            <a class="d-block py-sm px-md"
+               [ngClass]="{ 'bg-primary-light text-white': current === Tab.Account }"
+               (click)="to(2)"
+            >
+                Account
+            </a>
+        </nz-card>
+
+        <nz-card [acl]="user.ability('tenants', 'index')" nzTitle="Tenant settings" class="ant-card__body-nopadding">
+            <a class="d-block py-sm px-md"
+               [ngClass]="{ 'bg-primary-light text-white': current === Tab.Transaction_Fee }"
+               (click)="to(3)"
+            >
+                Transaction fees
+            </a>
+        </nz-card>
+    </nz-col>
+    <!-- Left -->
+
+    <!-- Right -->
+    <nz-col [nzSpan]="18">
+        <ng-container [ngSwitch]="current">
+            <!-- Profile -->
+            <ng-container *ngSwitchCase="Tab.Profile">
+                <nz-card nzTitle="Your Profile">
+                    <nz-row [nzGutter]="64">
+                        <!-- Profile form -->
+                        <nz-col [nzSpan]="16">
+                            <form
+                                    nz-form
+                                    [formGroup]="profileForm"
+                                    [nzLayout]="'vertical'"
+                                    (ngSubmit)="call('update_profile', profileForm.getRawValue())"
+                            >
+                                <!-- First Name -->
+                                <nz-form-item>
+                                    <nz-form-label nzFor="first_name" nzRequired>First Name</nz-form-label>
+                                    <nz-form-control nzErrorTip="This field is required">
+                                        <input nz-input formControlName="first_name" id="first_name"/>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <!-- First Name -->
+
+                                <!-- Last Name -->
+                                <nz-form-item>
+                                    <nz-form-label nzFor="last_name" nzRequired>Last Name</nz-form-label>
+                                    <nz-form-control nzErrorTip="This field is required">
+                                        <input nz-input formControlName="last_name" id="last_name"/>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <!-- Last Name -->
+
+                                <!-- Email -->
+                                <nz-form-item>
+                                    <nz-form-label nzFor="email">Email</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="email" id="email"/>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <!-- Email -->
+
+                                <!-- Phone number -->
+                                <nz-form-item>
+                                    <nz-form-label nzFor="cellphone">Phone number</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="cellphone" id="cellphone"/>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <!-- Phone number -->
+
+                                <!-- Country code -->
+                                <nz-form-item>
+                                    <nz-form-label nzFor="country_code">Country code</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="country_code" id="country_code"/>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <!-- Country code -->
+
+                                <!-- Authy ID -->
+                                <nz-form-item>
+                                    <nz-form-label nzFor="authy_id">Authy ID</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="authy_id" id="authy_id"/>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <!-- Authy ID -->
+
+                                <!-- KYC -->
+                                <nz-form-item>
+                                    <nz-form-label>
+                                        <span class="mr-sm">KYC: </span>
+                                        <i *ngIf="kycPassed" nz-icon nzType="check-circle" nzTheme="twotone"
+                                           nzTwotoneColor="#52c41a"></i>
+                                        <i *ngIf="!kycPassed" nz-icon nzType="close-circle" nzTheme="twotone"
+                                           nzTwotoneColor="#ff4d4f"></i>
+                                    </nz-form-label>
+                                </nz-form-item>
+                                <!-- KYC -->
+
+                                <!-- Roles -->
+                                <nz-form-item>
+                                    <nz-form-label>
+                                        <span class="mr-sm">Roles: </span>
+                                        <ng-container *ngFor="let role of roles; trackBy: trackByFn">
+                                            <nz-tag>{{ role | capitalize }}</nz-tag>
+                                        </ng-container>
+                                    </nz-form-label>
+                                </nz-form-item>
+                                <!-- Roles -->
+
+                                <!-- Balance -->
+                                <nz-form-item>
+                                    <nz-form-label>
+                                        Balance:
+                                        <user-wallet></user-wallet>
+                                    </nz-form-label>
+                                </nz-form-item>
+                                <!-- Balance -->
+
+                                <!------ Divider ------->
+                                <nz-form-item class="border-top-1 mt-md pt-md">
+                                </nz-form-item>
+                                <!------ Divider ------->
+
+                                <!-- Update button -->
+                                <nz-form-item>
+                                    <nz-form-control>
+                                        <button
+                                                nz-button
+                                                nzType="primary"
+                                                [disabled]="profileForm.invalid"
+                                        >
+                                            Update profile
+                                        </button>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <!-- Update button -->
+                            </form>
+                        </nz-col>
+                        <!-- Profile form -->
+
+                        <!-- Avatar -->
+                        <nz-col [nzSpan]="8">
+                            <h4>Profile picture</h4>
+                            <div class="">
+                                <img [src]="avatar" class="width-100" alt="Avatar"/>
+                            </div>
+<!--                            <nz-upload nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"-->
+<!--                                       class="d-block mt-md text-center">-->
+<!--                                <button nz-button>Upload new picture</button>-->
+<!--                            </nz-upload>-->
+                        </nz-col>
+                        <!-- Avatar -->
+                    </nz-row>
+                </nz-card>
+            </ng-container>
+            <!-- Profile -->
+
+            <!-- Account -->
+            <ng-container *ngSwitchCase="Tab.Account">
+                <nz-card nzTitle="Change password">
+                    <nz-row [nzGutter]="64">
+                        <nz-col [nzSpan]="16">
+                            <form nz-form nzLayout="vertical" [formGroup]="passwordForm">
+                                <!-- Current password -->
+                                <nz-form-item>
+                                    <nz-form-label nzFor="current_password" nzRequired>
+                                        Current password
+                                    </nz-form-label>
+                                    <nz-form-control nzErrorTip="This field is required">
+                                        <input nz-input
+                                               id="current_password"
+                                               type="password"
+                                               name="current_password"
+                                               formControlName="current_password"
+                                               required
+                                        />
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <!-- Current password -->
+
+                                <!-- New password -->
+                                <nz-form-item>
+                                    <nz-form-label nzFor="new_password" nzRequired>
+                                        New password
+                                    </nz-form-label>
+                                    <nz-form-control nzErrorTip="This field is required">
+                                        <input nz-input
+                                               id="new_password"
+                                               type="password"
+                                               name="new_password"
+                                               formControlName="new_password"
+                                               required
+                                        />
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <!-- New password -->
+
+                                <!-- Confirm password -->
+                                <nz-form-item>
+                                    <nz-form-label nzFor="new_password_confirm" nzRequired>
+                                        Confirm new password
+                                    </nz-form-label>
+                                    <nz-form-control [nzErrorTip]="errorTpl">
+                                        <input nz-input
+                                               id="new_password_confirm"
+                                               name="new_password_confirm"
+                                               type="password"
+                                               formControlName="new_password_confirm"
+                                               required
+                                        />
+                                        <ng-template #errorTpl>
+                                            <ng-container *ngIf="controls?.new_password_confirm?.hasError('required')">
+                                                Please confirm your password!
+                                            </ng-container>
+                                            <ng-container *ngIf="controls?.new_password_confirm?.hasError('mismatched')">
+                                                Two passwords that you enter is inconsistent!
+                                            </ng-container>
+                                        </ng-template>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <!-- Confirm password -->
+
+                                <!-- Forgot password -->
+                                <nz-form-item>
+                                    <nz-form-control>
+                                        <button
+                                                nz-button
+                                                nzType="primary"
+                                                nz-popconfirm
+                                                nzPopconfirmTitle="Are you sure you want to change your password?"
+                                                nzPopconfirmPlacement="top"
+                                                (nzOnConfirm)="updatePwd()"
+                                                [disabled]="passwordForm.invalid"
+                                        >
+                                            Change password
+                                        </button>
+                                        <a class="pl-sm btn-link" [routerLink]="['/forget']">Forgot your password?</a>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <!-- Forgot password -->
+                            </form>
+                        </nz-col>
+                    </nz-row>
+                </nz-card>
+            </ng-container>
+            <!-- Account -->
+
+            <!-- Transaction fee -->
+            <ng-container *ngSwitchCase="Tab.Transaction_Fee">
+                <nz-card nzTitle="Transaction fees">
+                    <ng-container *ngFor="let tenant of tenants ; trackBy: trackByFn">
+                        <nz-row>
+                            <div nz-col nzSpan="4">
+                                {{ tenant?.display_name }}
+                            </div>
+
+                            <nz-col nzSpan="12">
+                                <nz-slider
+                                        class="mr-sm"
+                                        [(ngModel)]="slider[tenant.display_name]"
+                                        [nzMin]="slider?.min"
+                                        [nzMax]="slider?.max"
+                                        [nzStep]="slider?.step"
+                                        [nzTipFormatter]="formatter"
+                                >
+                                </nz-slider>
+                            </nz-col>
+
+                            <div nz-col nzSpan="4">
+                                <nz-input-number
+                                        class="mr-sm"
+                                        [(ngModel)]="slider[tenant.display_name]"
+                                        [nzMin]="slider.min"
+                                        [nzMax]="slider.max"
+                                        [nzStep]="slider.step"
+                                >
+                                </nz-input-number>
+                                <span>$</span>
+                            </div>
+                        </nz-row>
+                    </ng-container>
+
+                    <p class="py-sm">Adjust fees applied for each transaction.</p>
+
+                    <button nz-button nzType="primary" (click)="updateTransFee()">
+                        <span>Confirm</span>
+                    </button>
+                </nz-card>
+            </ng-container>
+            <!-- Transaction fee -->
+        </ng-container>
+    </nz-col>
+    <!-- Right -->
+</nz-row>
