@@ -1,11 +1,14 @@
-<page-header [title]="title">{{ subTitle }}</page-header>
+<page-header [title]="title">
+  {{subTitle}}
+</page-header>
 
 <nz-card>
   <sf #sf
-      mode="edit"
-      [formData]="formData"
-      [schema]="schema"
-      [noColon]="true"
-      (formSubmit)="submit($event)">
+    mode="edit"
+    [formData]="formData"
+    [noColon]="true"
+    [schema]="schema"
+    (formSubmit)="submit($event)"
+  >
   </sf>
 </nz-card>

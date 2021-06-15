@@ -5,7 +5,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 @Component({
   selector: 'header-clear-storage',
   template: `
-    <i nz-icon nzType="tool" class="mr-sm"></i>
+    <i nz-icon nzType="tool"></i>
     Clear Local Storage
   `,
   // tslint:disable-next-line: no-host-metadata-property

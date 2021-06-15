@@ -4,7 +4,7 @@ import * as screenfull from 'screenfull';
 @Component({
   selector: 'header-fullscreen',
   template: `
-    <i nz-icon [nzType]="status ? 'fullscreen-exit' : 'fullscreen'" class="mr-sm"></i>
+    <i nz-icon [nzType]="status ? 'fullscreen-exit' : 'fullscreen'"></i>
     {{ status ? 'Exit Fullscreen' : 'Fullscreen' }}
   `,
   // tslint:disable-next-line: no-host-metadata-property

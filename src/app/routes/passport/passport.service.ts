@@ -6,11 +6,10 @@ import { DA_SERVICE_TOKEN, ITokenModel, ITokenService } from '@delon/auth';
 
 @Injectable()
 export class PassportService {
-  constructor(
-    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
-    private startupSrv: StartupService,
-    private router: Router,
-  ) {}
+  constructor(@Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+              private startupSrv: StartupService,
+              private router: Router) {
+  }
 
   handleAuthSuccess(res: HttpResponse<any>): void {
     const credentials = JSON.stringify({
@@ -35,7 +34,7 @@ export class PassportService {
       if (url.includes('/passport')) {
         url = '/';
       }
-      this.router.navigateByUrl(url).then();
+      this.router.navigateByUrl(url);
     });
   }
 }

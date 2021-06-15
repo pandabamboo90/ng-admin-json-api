@@ -8,10 +8,8 @@ import { Observable } from 'rxjs';
 })
 export class DeviseTokenAuthInterceptor implements HttpInterceptor {
 
-  constructor(
-    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
-    private injector: Injector,
-  ) {
+  constructor(private injector: Injector,
+              @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
