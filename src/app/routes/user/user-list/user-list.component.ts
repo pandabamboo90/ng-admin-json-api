@@ -4,6 +4,8 @@ import { STChange, STColumn, STComponent, STData } from '@delon/abc/st';
 import { _HttpClient } from '@delon/theme';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IResponseMeta } from '@shared';
+import { map } from 'rxjs/operators';
+import { map as _map } from 'lodash-es';
 
 @UntilDestroy()
 @Component({
@@ -23,24 +25,13 @@ export class UserUserListComponent implements OnInit {
   @ViewChild('st') private readonly st!: STComponent;
   columns: STColumn[] = [
     { title: '#', index: 'id' },
-    { title: 'First Name', index: 'first_name' },
-    { title: 'Last Name', index: 'last_name' },
-    { title: 'Email', index: 'email' },
-    { title: 'Country code', index: 'country_code' },
-    { title: 'Phone number', index: 'cellphone' },
-    { title: 'KYC passed', index: 'kyc_passed', type: 'yn' },
-    { title: 'Wallet ID', render: 'wallets-cell-tpl'},
-    { title: 'Tenant', index: 'tenant.display_name' },
+    { title: 'Name', index: 'attributes.name' },
+    { title: 'Email', index: 'attributes.email' },
+    { title: 'Mobile', index: 'attributes.mobile_phone' },
+    { title: 'Status', index: 'attributes.locked', render: 'attr-locked-tpl' },
     {
       title: '',
       buttons: [
-        {
-          text: 'Send money',
-          icon: 'dollar-circle',
-          click: (item: any) => {
-            this.router.navigateByUrl(`/user/${item.id}/send-money`);
-          },
-        },
         {
           text: 'Edit',
           icon: 'edit',
@@ -80,11 +71,26 @@ export class UserUserListComponent implements OnInit {
 
   fetchUserList(): void {
     this.loading = true;
-    this.http.get('/admin/users', {
+    this.http.get('/users', {
         'page[size]': this.meta.per_page,
         'page[number]': this.meta.page,
       })
-      .pipe(untilDestroyed(this))
+      .pipe(
+        untilDestroyed(this),
+        map((res) => {
+          _map(res.data, (user) => {
+            if (user.attributes.locked) {
+              user.statusType = 'default';
+              user.statusText = 'Locked';
+            } else {
+              user.statusType = 'success';
+              user.statusText = 'Active';
+            }
+          });
+
+          return res;
+        }),
+      )
       .subscribe((res) => {
         this.data = res.data;
         this.meta = res.meta;

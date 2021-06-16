@@ -1,58 +1,64 @@
-import { NgModule, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NgModule, Type } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { DelonACLModule } from '@delon/acl';
 import { DelonFormModule } from '@delon/form';
 import { AlainThemeModule } from '@delon/theme';
-import { DelonACLModule } from '@delon/acl';
 
 
 import { SHARED_DELON_MODULES } from './shared-delon.module';
 import { SHARED_ZORRO_MODULES } from './shared-zorro.module';
 
+const ANGULAR_MODULES = [
+  CommonModule,
+  RouterModule,
+  FormsModule,
+  ReactiveFormsModule,
+];
+
+const DELON_MODULES = [
+  DelonACLModule,
+  DelonFormModule,
+];
+
 // #region third libs
-const THIRDMODULES: Type<any>[] = [];
+const EXTERNAL_MODULES: Type<any>[] = [];
 // #endregion
 
 // #region your components & directives
 const COMPONENTS: Type<any>[] = [];
 const DIRECTIVES: Type<any>[] = [];
+
 // #endregion
 
 @NgModule({
   imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    ReactiveFormsModule,
+    ...ANGULAR_MODULES,
+    ...DELON_MODULES,
     AlainThemeModule.forChild(),
-    DelonACLModule,
     ...SHARED_DELON_MODULES,
     ...SHARED_ZORRO_MODULES,
-    // third libs
-    ...THIRDMODULES,
-    DelonFormModule
+    // External 3rd parties libs
+    ...EXTERNAL_MODULES,
   ],
   declarations: [
     // your components
     ...COMPONENTS,
-    ...DIRECTIVES
+    ...DIRECTIVES,
   ],
   exports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
+    ...ANGULAR_MODULES,
+    ...DELON_MODULES,
     AlainThemeModule,
-    DelonACLModule,
     ...SHARED_DELON_MODULES,
     ...SHARED_ZORRO_MODULES,
-    // third libs
-    ...THIRDMODULES,
+    // External 3rd parties libs
+    ...EXTERNAL_MODULES,
     // your components
     ...COMPONENTS,
     ...DIRECTIVES,
-    DelonFormModule
-  ]
+  ],
 })
-export class SharedModule { }
+export class SharedModule {
+}

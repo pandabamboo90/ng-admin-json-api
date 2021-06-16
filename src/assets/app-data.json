@@ -20,24 +20,9 @@
           "link": "/admin/list"
         },
         {
-          "text": "Tenants",
-          "icon": "anticon-apartment",
-          "link": "/tenant/list"
-        },
-        {
           "text": "Users",
           "icon": "anticon-team",
           "link": "/user/list"
-        },
-        {
-          "text": "Tickets",
-          "icon": "anticon-transaction",
-          "link": "/ticket/list"
-        },
-        {
-          "text": "Transactions",
-          "icon": "anticon-file-sync",
-          "link": "/transaction/list"
         }
       ]
     }

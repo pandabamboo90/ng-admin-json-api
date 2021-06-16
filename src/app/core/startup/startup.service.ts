@@ -41,10 +41,8 @@ export class StartupService {
       }),
     ).subscribe(([appData, currentUserData]) => {
         // User information: including name, avatar, email address
-        currentUserData.data.name = [currentUserData.data.first_name, currentUserData.data.last_name].join(' ');
         currentUserData.data.avatar = './assets/img/avatar.svg';
         this.settingService.setUser(currentUserData.data);
-
         // Application data
         const res: any = appData;
         // Application information: including site name, description, year
@@ -52,20 +50,6 @@ export class StartupService {
         // ACL: Set the permissions to full, https://ng-alain.com/acl/getting-started
         this.aclService.setFull(true);
         // Menu data, https://ng-alain.com/theme/menu
-
-        //
-        // Check if user already passed KYC process ?
-        //
-        _each(res.menu, (m: Menu) => {
-          _each(m.children, (mc: Menu) => {
-            if (!currentUserData.data.kyc_passed) {
-              if (_includes(['/ticket/list', '/transaction/list'], mc.link)) {
-                mc.hide = true;
-                console.log('hide this', mc);
-              }
-            }
-          });
-        });
         this.menuService.add(res.menu);
         // Can be set page suffix title, https://ng-alain.com/theme/title
         this.titleService.suffix = res.app.name;

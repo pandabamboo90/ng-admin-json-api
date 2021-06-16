@@ -33,14 +33,6 @@ export class AdminAdminListComponent implements OnInit {
       title: '',
       buttons: [
         {
-          text: 'Send money',
-          icon: 'dollar-circle',
-          click: (item: any) => {
-            this.router.navigateByUrl(`/user/${item.id}/send-money`);
-          },
-          iif: (item => item.kyc_passed && this.currentUser.id != item.id),
-        },
-        {
           text: 'Edit',
           icon: 'edit',
           click: (item: any) => {
