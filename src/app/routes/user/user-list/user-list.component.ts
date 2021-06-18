@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { User, UserApi } from '@core';
 import { STChange, STColumn, STComponent, STData } from '@delon/abc/st';
 import { _HttpClient } from '@delon/theme';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { IResponseMeta } from '@shared';
-import { map } from 'rxjs/operators';
 import { map as _map } from 'lodash-es';
+import { DocumentCollection } from 'ngx-jsonapi';
+import { filter, map } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -16,7 +17,7 @@ export class UserUserListComponent implements OnInit {
 
   loading = false;
   data: STData[] = [];
-  meta: IResponseMeta = {
+  meta: { [p: string]: any } = {
     total: 0,
     per_page: 10, // page size
     page: 1, // page index
@@ -28,7 +29,8 @@ export class UserUserListComponent implements OnInit {
     { title: 'Name', index: 'attributes.name' },
     { title: 'Email', index: 'attributes.email' },
     { title: 'Mobile', index: 'attributes.mobile_phone' },
-    { title: 'Status', index: 'attributes.locked', render: 'attr-locked-tpl' },
+    { title: 'Status', render: 'cell-locked-tpl' },
+    { title: 'Roles', render: 'cell-roles-tpl' },
     {
       title: '',
       buttons: [
@@ -58,7 +60,8 @@ export class UserUserListComponent implements OnInit {
   ];
 
   constructor(private http: _HttpClient,
-              private router: Router) {
+              private router: Router,
+              private userApi: UserApi) {
   }
 
   ngOnInit(): void {
@@ -71,27 +74,32 @@ export class UserUserListComponent implements OnInit {
 
   fetchUserList(): void {
     this.loading = true;
-    this.http.get('/users', {
-        'page[size]': this.meta.per_page,
-        'page[number]': this.meta.page,
+
+    this.userApi.all({
+        include: ['roles'],
+        page: {
+          number: this.meta.page,
+          size: this.meta.per_page,
+        },
       })
       .pipe(
         untilDestroyed(this),
+        filter(res => res.loaded), // Only get the response when every resources are loaded !
         map((res) => {
-          _map(res.data, (user) => {
+          _map(res.data, (user: User) => {
             if (user.attributes.locked) {
-              user.statusType = 'default';
-              user.statusText = 'Locked';
+              user.status.type = 'default';
+              user.status.text = 'Locked';
             } else {
-              user.statusType = 'success';
-              user.statusText = 'Active';
+              user.status.type = 'success';
+              user.status.text = 'Active';
             }
           });
 
           return res;
         }),
       )
-      .subscribe((res) => {
+      .subscribe((res: DocumentCollection<User>) => {
         this.data = res.data;
         this.meta = res.meta;
         this.loading = false;

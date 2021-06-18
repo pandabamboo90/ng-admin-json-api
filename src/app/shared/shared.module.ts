@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule, Type } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -15,6 +16,7 @@ const ANGULAR_MODULES = [
   RouterModule,
   FormsModule,
   ReactiveFormsModule,
+  HttpClientModule
 ];
 
 const DELON_MODULES = [

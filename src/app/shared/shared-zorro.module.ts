@@ -10,6 +10,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzMessageModule } from 'ng-zorro-antd/message';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
@@ -21,6 +22,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzNotificationModule } from 'ng-zorro-antd/notification';
 
 export const SHARED_ZORRO_MODULES = [
   NzFormModule,
@@ -45,5 +47,7 @@ export const SHARED_ZORRO_MODULES = [
   NzCheckboxModule,
   NzSpinModule,
   NzTagModule,
-  NzBadgeModule
+  NzBadgeModule,
+  NzMessageModule,
+  NzNotificationModule
 ];

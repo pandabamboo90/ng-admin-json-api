@@ -15,8 +15,13 @@
       [loading]="loading"
       (change)="onPageChange($event)"
   >
-    <ng-template st-row="attr-locked-tpl" let-i>
-      <nz-badge [nzStatus]="i.statusType" [nzText]="i.statusText"></nz-badge>
+    <ng-template st-row="cell-locked-tpl" let-item>
+      <nz-badge [nzStatus]="item.status.type" [nzText]="item.status.text"></nz-badge>
+    </ng-template>
+    <ng-template st-row="cell-roles-tpl" let-item>
+      <nz-tag *ngFor="let role of item.relationships.roles.data">
+        {{ role.attributes.display_name }}
+      </nz-tag>
     </ng-template>
   </st>
 </nz-card>

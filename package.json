@@ -52,7 +52,8 @@
     "ajv": "^8.1.0",
     "ngx-countdown": "^11.0.3",
     "@ngneat/until-destroy": "^8.0.4",
-    "lodash-es": "^4.17.21"
+    "lodash-es": "^4.17.21",
+    "ngx-jsonapi": "^2.2.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1102.13",
@@ -91,7 +92,8 @@
     "ng-alain-codelyzer": "^0.0.1",
     "ng-alain-plugin-theme": "^11.0.1",
     "nz-tslint-rules": "^0.901.2",
-    "ng-alain-sts": "^0.0.1"
+    "ng-alain-sts": "^0.0.1",
+    "@types/lodash-es": "^4.17.4"
   },
   "husky": {
     "hooks": {

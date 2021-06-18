@@ -176,6 +176,9 @@ export class DefaultInterceptor implements HttpInterceptor {
     this.checkStatus(ev);
     // Business processing: some common operations
     switch (ev.status) {
+      case 0:
+        this.goTo(`/exception/500`);
+        break;
       case 200:
         // 业务层级错误处理，以下是假定restful有一套统一输出格式（指不管成功与否都有相应的数据格式）情况下进行处理
         // 例如响应内容：
@@ -204,7 +207,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         this.toLogin();
         break;
       case 403:
-      // case 404:
+      case 404:
       case 500:
         this.goTo(`/exception/${ev.status}`);
         break;

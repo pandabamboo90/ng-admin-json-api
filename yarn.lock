@@ -2012,6 +2012,18 @@
   dependencies:
     jszip "*"
 
+"@types/lodash-es@^4.17.4":
+  version "4.17.4"
+  resolved "https://registry.yarnpkg.com/@types/lodash-es/-/lodash-es-4.17.4.tgz#b2e440d2bf8a93584a9fd798452ec497986c9b97"
+  integrity sha512-BBz79DCJbD2CVYZH67MBeHZRX++HF+5p8Mo5MzjZi64Wac39S3diedJYHZtScbRVf4DjZyN6LzA0SB0zy+HSSQ==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash@*":
+  version "4.14.170"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.170.tgz#0d67711d4bf7f4ca5147e9091b847479b87925d6"
+  integrity sha512-bpcvu/MKHHeYX+qeEN8GE7DIravODWdACVA1ctevD8CN24RhPZIKMn9ntfAsrvLfSX3cR5RrBKAbYm9bGs0A+Q==
+
 "@types/mdast@^3.0.0":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/mdast/-/mdast-3.0.3.tgz#2d7d671b1cd1ea3deb306ea75036c2a0407d2deb"
@@ -4626,6 +4638,11 @@ detect-node@^2.0.4:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.0.5.tgz#9d270aa7eaa5af0b72c4c9d9b814e7f4ce738b79"
   integrity sha512-qi86tE6hRcFHy8jI1m2VG+LaPUR1LhqDa5G8tVjuUXmOrpuAgqsA1pN0+ldgr3aKUH+QLI9hCY/OcRYisERejw==
+
+dexie@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/dexie/-/dexie-2.0.4.tgz#6027a5e05879424e8f9979d8c14e7420f27e3a11"
+  integrity sha512-aQ/s1U2wHxwBKRrt2Z/mwFNHMQWhESerFsMYzE+5P5OsIe5o1kgpFMWkzKTtkvkyyEni6mWr/T4HUJuY9xIHLA==
 
 di@^0.0.1:
   version "0.0.1"
@@ -7414,7 +7431,7 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
-lodash-es@^4.17.21:
+lodash-es@^4.17, lodash-es@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
   integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
@@ -8127,10 +8144,10 @@ ng-alain-sts@^0.0.1:
     meow "^5.0.0"
     request "^2.88.0"
 
-ng-alain@^11.8.0:
-  version "11.8.1"
-  resolved "https://registry.yarnpkg.com/ng-alain/-/ng-alain-11.8.1.tgz#66640dc7db00fd3f63802b8b31328a63bee5099c"
-  integrity sha512-uOJoYevklIQwHcbjpPcN529jBa+6ptkIH8KtFiMSh79A+GjKdzQ9CS3OSuN3ZVt7slpmS54tcLg8J19xiKby1w==
+ng-alain@^11.10.2:
+  version "11.10.2"
+  resolved "https://registry.yarnpkg.com/ng-alain/-/ng-alain-11.10.2.tgz#f12532cf1cc0633a8d7186fa166fe1a045a55081"
+  integrity sha512-ieftiNghv9KnKwZWL949NQpNzjfnse3sev9OJHJO8FRCMMJufBHPp8B/iLxM1IECeYc20CrYU6zVff2bH7/+kg==
 
 ng-zorro-antd@^11.4.1:
   version "11.4.2"
@@ -8149,6 +8166,14 @@ ngx-countdown@^11.0.3:
   integrity sha512-Porzyl9jo/lS0eg6dUS0UEloRyfk9naDeL2iSt/4Wwmogq+hlHXUDvVuLm/kO7haAGYOQPSsuAIoFB4m9fRMTg==
   dependencies:
     tslib "^2.0.0"
+
+ngx-jsonapi@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/ngx-jsonapi/-/ngx-jsonapi-2.2.1.tgz#b412afe493a6998dc00e1126d2d4ba090e515e9b"
+  integrity sha512-X+HgVMP1KepfOeXxVy4hxNKgOwFQbwutNqJ3JAc649Y/pP6aZZMCwxBeeAGX5t5wH4jqHmeEe/OZFXOijrslUQ==
+  dependencies:
+    dexie "^2.0.4"
+    lodash-es "^4.17"
 
 ngx-tinymce@^11.0.0:
   version "11.0.0"
