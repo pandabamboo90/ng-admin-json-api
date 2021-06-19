@@ -6,7 +6,6 @@ import { APP_INITIALIZER, LOCALE_ID, NgModule, Type } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  NgxJsonapiServicesRegisterService,
   DefaultInterceptor,
   DeviseTokenAuthInterceptor,
   RoleApi,
@@ -14,8 +13,9 @@ import {
   UserApi,
 } from '@core';
 import { DelonAuthModule } from '@delon/auth';
-import { DELON_LOCALE, zh_CN as delonLang } from '@delon/theme';
+import { DELON_LOCALE, en_US as delonLang } from '@delon/theme';
 import { JsonSchemaModule, SharedModule } from '@shared';
+import { NgxJsonapiRegisterService } from '@src/app/core/http/ngx-jsonapi-register.service';
 import { zhCN as dateLang } from 'date-fns/locale';
 import { en_US as zorroLang, NZ_DATE_LOCALE, NZ_I18N } from 'ng-zorro-antd/i18n';
 import { NgxJsonapiModule } from 'ngx-jsonapi';
@@ -56,7 +56,7 @@ const APP_INIT_PROVIDES = [
 ];
 
 const JSON_API_PROVIDES = [
-  NgxJsonapiServicesRegisterService,
+  NgxJsonapiRegisterService,
   UserApi, RoleApi,
 ];
 

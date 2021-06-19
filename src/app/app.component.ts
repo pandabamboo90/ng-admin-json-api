@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgxJsonapiServicesRegisterService } from '@core';
+
 import { TitleService, VERSION as VERSION_ALAIN } from '@delon/theme';
+import { NgxJsonapiRegisterService } from '@src/app/core/http/ngx-jsonapi-register.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { VERSION as VERSION_ZORRO } from 'ng-zorro-antd/version';
 import { filter } from 'rxjs/operators';
@@ -17,9 +18,9 @@ export class AppComponent implements OnInit {
     private router: Router,
     private titleSrv: TitleService,
     private modalSrv: NzModalService,
-    private ngxJsonapiServicesRegister: NgxJsonapiServicesRegisterService
+    private ngxJsonapiRegisterService: NgxJsonapiRegisterService
   ) {
-    ngxJsonapiServicesRegister.call();
+    ngxJsonapiRegisterService.call();
     renderer.setAttribute(el.nativeElement, 'ng-alain-version', VERSION_ALAIN.full);
     renderer.setAttribute(el.nativeElement, 'ng-zorro-version', VERSION_ZORRO.full);
   }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { RoleApi, UserApi } from '@core';
 
 @Injectable({providedIn: 'root'})
-export class NgxJsonapiServicesRegisterService {
+export class NgxJsonapiRegisterService {
   constructor(private userApi: UserApi,
               private roleApi: RoleApi) {
   }

@@ -1,5 +1,6 @@
 // Interfaces
-export * from './interface/response-meta';
+export * from './interfaces/response-meta.interface';
+export * from './interfaces/json-api-error.interface';
 
 // Components
 
