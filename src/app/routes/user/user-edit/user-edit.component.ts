@@ -1,13 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { User, UserApi } from '@core';
-import { SFComponent, SFSchema } from '@delon/form';
-import { _HttpClient } from '@delon/theme';
+import { Role, RoleApi, User, UserApi } from '@core';
+import { SFCheckboxWidgetSchema, SFComponent, SFSchema } from '@delon/form';
+import { SFSchemaEnumType } from '@delon/form/src/schema';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ErrorResponse, JsonApiError } from '@shared';
-import { each as _each, omit as _omit } from 'lodash-es';
+import { each as _each, map as _map, omit as _omit, pick as _pick } from 'lodash-es';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { filter, finalize } from 'rxjs/operators';
+import { DocumentCollection } from 'ngx-jsonapi';
+import { Observable } from 'rxjs';
+import { concatMap, filter, finalize, map } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -25,54 +27,74 @@ export class UserUserEditComponent implements OnInit {
   loading = false;
   formData!: any;
   schema: SFSchema = {
+    type: 'object',
     properties: {
-      name: {
-        title: 'Name',
-        type: 'string',
-      },
-      email: {
-        type: 'string',
-        title: 'Email',
-        format: 'email',
-      },
-      mobile_phone: {
-        type: 'string',
-        title: 'Mobile',
-        minLength: 9,
-        maxLength: 12,
-        pattern: '[0-9]+',
-      },
-      password: {
-        type: 'string',
-        title: 'Password',
-        minLength: 8,
-        ui: {
-          type: 'password'
+      attributes: {
+        type: 'object',
+        properties: {
+          name: {
+            title: 'Name',
+            type: 'string',
+          },
+          email: {
+            type: 'string',
+            title: 'Email',
+            format: 'email',
+          },
+          mobile_phone: {
+            type: 'string',
+            title: 'Mobile',
+            minLength: 9,
+            maxLength: 12,
+            pattern: '[0-9]+',
+          },
+          password: {
+            type: 'string',
+            title: 'Password',
+            minLength: 8,
+            ui: {
+              type: 'password',
+            },
+          },
+          confirm_password: {
+            type: 'string',
+            title: 'Confirm password',
+            minLength: 8,
+            ui: {
+              type: 'password',
+            },
+          },
         },
+        required: ['name', 'email', 'mobile_phone', 'password', 'confirm_password'],
       },
-      confirm_password: {
-        type: 'string',
-        title: 'Confirm password',
-        minLength: 8,
-        ui: {
-          type: 'password',
+      relationships: {
+        type: 'object',
+        properties: {
+          roles: {
+            type: 'string',
+            title: 'Roles',
+            ui: {
+              widget: 'checkbox',
+              // asyncData: this.fetchRoleList.bind(this),
+            } as SFCheckboxWidgetSchema,
+          },
         },
       },
     },
-    required: ['name', 'email', 'mobile_phone', 'password', 'confirm_password'],
   };
 
   constructor(
     private msgSrv: NzMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    public http: _HttpClient,
     private userApi: UserApi,
+    private roleApi: RoleApi,
   ) {
   }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params.id.toString();
+    // this.fetchRoleList();
 
     if (this.id === 'new') {
       this.title = 'Add User';
@@ -81,13 +103,24 @@ export class UserUserEditComponent implements OnInit {
     } else {
       this.title = `Edit User`;
       this.subTitle = `ID: ${this.id}`;
-      this.fetchUserById(this.id);
+
+      this.fetchRoleList()
+        .pipe(
+          map((roleEnum) => this.schema.properties!.relationships.properties!.roles.enum = roleEnum),
+          concatMap(() => this.fetchUserById(this.id)),
+          map((user: User) => {
+            this.user = user;
+            this.formData = _pick(user, 'attributes');
+            this.updateUIForEditForm();
+          }),
+        )
+        .subscribe();
     }
   }
 
   submit(formData: any): void {
     this.loading = true;
-    this.user.attributes = formData;
+    this.user = formData;
 
     this.user
       .save()
@@ -107,26 +140,38 @@ export class UserUserEditComponent implements OnInit {
       });
   }
 
-  fetchUserById(id: string): void {
-    this.userApi.get(id)
+  fetchUserById(id: string): Observable<User> {
+    console.log('fetchUserById');
+    return this.userApi.get(id)
       .pipe(
         untilDestroyed(this),
         filter(res => res.loaded),
-      )
-      .subscribe((user: User) => {
-        this.user = user;
-        this.formData = user.attributes;
-        this.updateUIForEditForm();
-      });
+      );
+  }
+
+  fetchRoleList(): Observable<SFSchemaEnumType[]> {
+    return this.roleApi.all()
+      .pipe(
+        untilDestroyed(this),
+        filter(res => res.loaded),
+        map((res: DocumentCollection<Role>) => {
+          const roleEnum: SFSchemaEnumType[] = _map(res.data, (item: Role) => {
+            return { label: item.attributes.display_name, value: item.id };
+          });
+
+          return roleEnum;
+        }),
+      );
   }
 
   private updateUIForEditForm(): void {
     // Set email as readonly field
-    this.schema.properties!.email.readOnly = true;
+    this.schema.properties!.attributes.properties!.email.readOnly = true;
     // Remove the password fields as we dont' want user to accidentally update password
-    this.schema.properties = _omit(this.schema.properties, ['password', 'confirm_password']) as any;
-    this.schema.required = _omit(this.schema.required, ['password', 'confirm_password']) as string[];
+    this.schema.properties!.attributes.properties = _omit(this.schema.properties!.attributes.properties, ['password', 'confirm_password']) as any;
+    this.schema.properties!.attributes.required = _omit(this.schema.properties!.attributes.required, ['password', 'confirm_password']) as string[];
 
-    this.sf.refreshSchema();
+    // Set default value
+    this.schema.properties!.relationships.properties!.roles.default = _map(this.user.relationships.roles.data, 'id')
   }
 }
