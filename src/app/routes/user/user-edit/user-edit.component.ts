@@ -4,7 +4,7 @@ import { Role, RoleApi, User, UserApi } from '@core';
 import { SFCheckboxWidgetSchema, SFComponent, SFSchema } from '@delon/form';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ErrorResponse, JsonApiError } from '@shared';
-import { each as _each, map as _map, omit as _omit } from 'lodash-es';
+import { each as _each, map as _map, omit as _omit, difference as _difference } from 'lodash-es';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { DocumentCollection } from 'ngx-jsonapi';
 import { Observable } from 'rxjs';
@@ -128,6 +128,11 @@ export class UserUserEditComponent implements OnInit {
   submit(formData: any): void {
     const selectedRoleIds = this.sf.getProperty('/relationships/roles/data')?.value;
     const selectedRoles = this.roles.filter((role) => selectedRoleIds.indexOf(role.id) > -1);
+    const removedRoleIds = _difference(_map(this.roles, 'id'), selectedRoleIds);
+
+    _each(removedRoleIds, (id) => {
+      this.user.removeRelationship('roles', id)
+    });
     this.user.addRelationships(selectedRoles, 'roles');
 
     this.user
