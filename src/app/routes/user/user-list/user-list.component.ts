@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { User, UserApi } from '@core';
 import { STChange, STColumn, STComponent, STData } from '@delon/abc/st';
@@ -12,6 +12,7 @@ import { filter, map } from 'rxjs/operators';
 @Component({
   selector: 'app-user-user-list',
   templateUrl: './user-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserUserListComponent implements OnInit {
 
@@ -61,7 +62,8 @@ export class UserUserListComponent implements OnInit {
 
   constructor(private http: _HttpClient,
               private router: Router,
-              private userApi: UserApi) {
+              private userApi: UserApi,
+              private cdr: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -103,6 +105,7 @@ export class UserUserListComponent implements OnInit {
         this.data = res.data;
         this.meta = res.meta;
         this.loading = false;
+        this.cdr.detectChanges();
       });
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Role, RoleApi, User, UserApi } from '@core';
 import { SFCheckboxWidgetSchema, SFComponent, SFSchema } from '@delon/form';
@@ -14,6 +14,7 @@ import { concatMap, filter, finalize, tap } from 'rxjs/operators';
 @Component({
   selector: 'app-user-user-edit',
   templateUrl: './user-edit.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserUserEditComponent implements OnInit {
 
@@ -126,6 +127,8 @@ export class UserUserEditComponent implements OnInit {
   }
 
   submit(formData: any): void {
+    this.user.attributes = formData.attributes;
+
     const selectedRoleIds = this.sf.getProperty('/relationships/roles/data')?.value;
     const selectedRoles = this.roles.filter((role) => selectedRoleIds.indexOf(role.id) > -1);
     const removedRoleIds = _difference(_map(this.roles, 'id'), selectedRoleIds);
