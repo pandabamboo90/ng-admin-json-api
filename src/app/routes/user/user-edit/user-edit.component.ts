@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Role, RoleApi, User, UserApi } from '@core';
-import { SFCheckboxWidgetSchema, SFComponent, SFSchema } from '@delon/form';
+import { SFCheckboxWidgetSchema, SFComponent, SFSchema, SFUploadWidgetSchema } from '@delon/form';
+import { assetHost } from '@env/environment';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ErrorResponse, JsonApiError } from '@shared';
-import { each as _each, map as _map, omit as _omit, difference as _difference } from 'lodash-es';
+import { assign as _assign, difference as _difference, each as _each, map as _map, omit as _omit } from 'lodash-es';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { DocumentCollection } from 'ngx-jsonapi';
 import { Observable } from 'rxjs';
 import { concatMap, filter, finalize, tap } from 'rxjs/operators';
@@ -36,6 +38,26 @@ export class UserUserEditComponent implements OnInit {
           name: {
             title: 'Name',
             type: 'string',
+          },
+          image: {
+            type: 'object',
+            properties: {
+              uploader: {
+                title: 'Profile Image',
+                type: 'string',
+                ui: {
+                  widget: 'upload',
+                  type: 'select',
+                  urlReName: 'url',
+                  text: ' ',
+                  hint: '',
+                  listType: 'picture-card',
+                  fileType: 'image/png,image/jpeg,image/gif,image/bmp',
+                  multiple: false,
+                  beforeUpload: this.beforeUpload.bind(this),
+                } as SFUploadWidgetSchema,
+              },
+            },
           },
           email: {
             type: 'string',
@@ -127,14 +149,14 @@ export class UserUserEditComponent implements OnInit {
   }
 
   submit(formData: any): void {
-    this.user.attributes = formData.attributes;
+    this.user.attributes = _assign({}, this.user.attributes, _omit(formData.attributes, ['image']));
 
     const selectedRoleIds = this.sf.getProperty('/relationships/roles/data')?.value;
     const selectedRoles = this.roles.filter((role) => selectedRoleIds.indexOf(role.id) > -1);
     const removedRoleIds = _difference(_map(this.roles, 'id'), selectedRoleIds);
 
     _each(removedRoleIds, (id) => {
-      this.user.removeRelationship('roles', id)
+      this.user.removeRelationship('roles', id);
     });
     this.user.addRelationships(selectedRoles, 'roles');
 
@@ -195,12 +217,35 @@ export class UserUserEditComponent implements OnInit {
   }
 
   private setAttrValues() {
-    _each(this.user.attributes, (attrValue, attrKey) => {
+    _each(this.user.attributes, (attrValue: any, attrKey) => {
       const formProp = this.sf.getProperty(`/attributes/${attrKey}`);
 
       if (formProp) {
         this.sf.setValue(`/attributes/${attrKey}`, attrValue);
       }
+
+      if (attrKey === 'image') {
+        const imageUploaderProp = this.sf.getProperty('/attributes/image/uploader');
+        imageUploaderProp!.schema.enum = [
+          { url: `${assetHost.baseUrl}${attrValue.url}` },
+        ];
+        imageUploaderProp?.widget.reset(null);
+      }
     });
+  }
+
+  private beforeUpload(file: NzUploadFile, fileList: NzUploadFile[]): boolean | Observable<boolean> {
+    const imageUploaderProp = this.sf.getProperty('/attributes/image/uploader');
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file as any);
+    reader.onload = (e: any) => {
+      const base64String = e.target.result;
+      this.user.attributes.image.data = base64String;
+      imageUploaderProp!.schema.enum = [{ url: base64String }];
+      imageUploaderProp?.widget.reset(null);
+    };
+
+    return false; // Cancel automatic upload
   }
 }

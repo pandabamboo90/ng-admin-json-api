@@ -18,6 +18,10 @@ export const environment = {
   // modules: [DelonMockModule.forRoot({ data: MOCKDATA })],
 } as Environment;
 
+export const assetHost = {
+  baseUrl: '//localhost:3000'
+}
+
 /*
  * In development mode, to ignore zone related error stack frames such as
  * `zone.run`, `zoneDelegate.invokeTask` for easier debugging, you can

@@ -12,6 +12,10 @@ export class User extends Resource {
     name: 'default name',
     email: '',
     mobile_phone: '',
+    image: {
+      data: null,
+      url: null,
+    },
     locked: false,
   };
 

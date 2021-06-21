@@ -14,6 +14,7 @@
       [page]="{front: false}"
       [loading]="loading"
       (change)="onPageChange($event)"
+      [size]="'small'"
   >
     <ng-template st-row="cell-locked-tpl" let-item>
       <nz-badge [nzStatus]="item.status.type" [nzText]="item.status.text"></nz-badge>
