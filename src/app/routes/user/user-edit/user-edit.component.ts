@@ -126,6 +126,7 @@ export class UserUserEditComponent implements OnInit {
       this.title = 'Add User';
       this.subTitle = ``;
       this.user = this.userApi.new();
+      this.user.attributes = new User().attributes;
 
       this.fetchRoleList()
         .subscribe(() => {

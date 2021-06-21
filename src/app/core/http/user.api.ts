@@ -9,7 +9,7 @@ export class User extends Resource {
   }
 
   attributes = {
-    name: 'default name',
+    name: '',
     email: '',
     mobile_phone: '',
     image: {
