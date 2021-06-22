@@ -5,9 +5,9 @@ import { STChange, STColumn, STComponent, STData } from '@delon/abc/st';
 import { _HttpClient } from '@delon/theme';
 import { assetHost } from '@env/environment';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map as _map } from 'lodash-es';
+import { map as _map, assign as _assign } from 'lodash-es';
 import { DocumentCollection } from 'ngx-jsonapi';
-import { filter, map } from 'rxjs/operators';
+import { filter, finalize, map, tap } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -77,8 +77,6 @@ export class UserUserListComponent implements OnInit {
   }
 
   fetchUserList(): void {
-    this.loading = true;
-
     this.userApi.all({
         include: ['roles'],
         page: {
@@ -88,6 +86,10 @@ export class UserUserListComponent implements OnInit {
       })
       .pipe(
         untilDestroyed(this),
+        tap(() => {
+          this.loading = true
+          this.cdr.detectChanges();
+        }),
         filter(res => res.loaded), // Only get the response when every resources are loaded !
         map((res) => {
           _map(res.data, (user: User) => {
@@ -110,12 +112,14 @@ export class UserUserListComponent implements OnInit {
 
           return res;
         }),
+        finalize(() => {
+          this.loading = false
+          this.cdr.detectChanges();
+        }), // Success or not, turn off loading
       )
       .subscribe((res: DocumentCollection<User>) => {
-        this.data = res.data;
-        this.meta = res.meta;
-        this.loading = false;
-        this.cdr.detectChanges();
+        this.data = _assign([], res.data);
+        this.meta = _assign({}, res.meta);
       });
   }
 

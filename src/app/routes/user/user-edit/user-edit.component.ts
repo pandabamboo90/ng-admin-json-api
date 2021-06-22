@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Role, RoleApi, User, UserApi } from '@core';
 import { SFCheckboxWidgetSchema, SFComponent, SFSchema, SFUploadWidgetSchema } from '@delon/form';
@@ -123,6 +123,7 @@ export class UserUserEditComponent implements OnInit {
     private route: ActivatedRoute,
     private userApi: UserApi,
     private roleApi: RoleApi,
+    private cdr: ChangeDetectorRef,
   ) {
   }
 
@@ -146,6 +147,7 @@ export class UserUserEditComponent implements OnInit {
 
       this.fetchRoleList()
         .pipe(
+          untilDestroyed(this),
           concatMap(() => this.fetchUserById(this.id)),
         )
         .subscribe(() => {
@@ -171,17 +173,25 @@ export class UserUserEditComponent implements OnInit {
     this.user
       .save()
       .pipe(
-        tap(() => this.loading = true),
-        finalize(() => this.loading = false), // Success or not, turn off loading
+        untilDestroyed(this),
+        tap(() => {
+          this.loading = true;
+          this.cdr.detectChanges();
+        }),
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        }), // Success or not, turn off loading
       )
       .subscribe(res => {
         this.msgSrv.success('Updated successfully !');
         this.router.navigateByUrl(`/user/list`);
       }, (errRes: ErrorResponse) => {
         _each(errRes.errors, (errorObj: JsonApiError) => {
-          const formItem = this.sf.getProperty('/' + errorObj.field);
-          if (formItem) {
-            formItem.setParentAndPlatErrors([{ keyword: 'server', message: errorObj.detail }], '');
+          const formProp = this.sf.getProperty('/attributes/' + errorObj.field);
+
+          if (formProp) {
+            formProp.setParentAndPlatErrors([{ keyword: 'server', message: errorObj.detail }], '');
           }
         });
       });
@@ -237,7 +247,7 @@ export class UserUserEditComponent implements OnInit {
         formProp.schema.default = attrValue;
 
         // Set value for the form fields, will use when "Submit" form
-        formProp.resetValue(attrValue, true)
+        formProp.resetValue(attrValue, true);
       }
 
       if (attrKey === 'image' && attrValue) {
