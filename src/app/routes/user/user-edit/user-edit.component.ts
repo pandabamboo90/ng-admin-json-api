@@ -229,7 +229,11 @@ export class UserUserEditComponent implements OnInit {
       const formProp = this.sf.getProperty(`/attributes/${attrKey}`);
 
       if (formProp) {
-        this.sf.setValue(`/attributes/${attrKey}`, attrValue);
+        // Set default value, will be used when click on "Reset" button
+        formProp.schema.default = attrValue;
+
+        // Set value for the form fields, will use when "Submit" form
+        formProp.resetValue(attrValue, true)
       }
 
       if (attrKey === 'image' && attrValue) {
