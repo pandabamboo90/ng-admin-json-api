@@ -5,7 +5,14 @@ import { SFCheckboxWidgetSchema, SFComponent, SFSchema, SFUploadWidgetSchema } f
 import { assetHost } from '@env/environment';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ErrorResponse, JsonApiError } from '@shared';
-import { assign as _assign, difference as _difference, each as _each, map as _map, omit as _omit } from 'lodash-es';
+import {
+  assign as _assign,
+  difference as _difference,
+  each as _each,
+  get as _get,
+  map as _map,
+  omit as _omit,
+} from 'lodash-es';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { DocumentCollection } from 'ngx-jsonapi';
@@ -225,10 +232,10 @@ export class UserUserEditComponent implements OnInit {
         this.sf.setValue(`/attributes/${attrKey}`, attrValue);
       }
 
-      if (attrKey === 'image') {
+      if (attrKey === 'image' && attrValue) {
         const imageUploaderProp = this.sf.getProperty('/attributes/image/uploader');
         imageUploaderProp!.schema.enum = [
-          { url: `${assetHost.baseUrl}${attrValue.url}` },
+          { url: `${assetHost.baseUrl}${_get(attrValue, 'url')}` },
         ];
         imageUploaderProp?.widget.reset(null);
       }
@@ -242,7 +249,15 @@ export class UserUserEditComponent implements OnInit {
     reader.readAsDataURL(file as any);
     reader.onload = (e: any) => {
       const base64String = e.target.result;
-      this.user.attributes.image.data = base64String;
+      if (this.user.attributes.image) {
+        this.user.attributes.image.data = base64String;
+      } else {
+        this.user.attributes.image = {
+          url: null,
+          data: base64String,
+        };
+      }
+
       imageUploaderProp!.schema.enum = [{ url: base64String }];
       imageUploaderProp?.widget.reset(null);
     };

@@ -12,7 +12,7 @@
     {
       "text": "Management",
       "group": true,
-      "hideInBreadcrumb": true,
+      "hideInBreadcrumb": false,
       "children": [
         {
           "text": "Admins",

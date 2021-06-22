@@ -1,5 +1,8 @@
 <page-header [title]="title">
-  {{subTitle}}
+  <nz-breadcrumb>
+    <nz-breadcrumb-item><a [routerLink]="'/user/list'">Users</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item>{{subTitle}}</nz-breadcrumb-item>
+  </nz-breadcrumb>
 </page-header>
 
 <nz-card>
