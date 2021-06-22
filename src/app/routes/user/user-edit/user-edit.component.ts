@@ -221,6 +221,10 @@ export class UserUserEditComponent implements OnInit {
     rolesProp!.schema.enum = _map(this.roles, (item: Role) => {
       return { label: item.attributes.display_name, value: item.id };
     });
+    // Set default value, will be used when click on "Reset" button
+    rolesProp!.schema.default = initialValues;
+
+    // Set value for the form fields, will use when "Submit" form
     rolesProp!.resetValue(initialValues, true);
   }
 
@@ -256,10 +260,7 @@ export class UserUserEditComponent implements OnInit {
       if (this.user.attributes.image) {
         this.user.attributes.image.data = base64String;
       } else {
-        this.user.attributes.image = {
-          url: null,
-          data: base64String,
-        };
+        this.user.attributes.image = { data: base64String };
       }
 
       imageUploaderProp!.schema.enum = [{ url: base64String }];
