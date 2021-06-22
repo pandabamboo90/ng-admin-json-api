@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Role, RoleApi, User, UserApi } from '@core';
-import { SFCheckboxWidgetSchema, SFComponent, SFSchema, SFUploadWidgetSchema } from '@delon/form';
+import { SFCheckboxWidgetSchema, SFComponent, SFSchema, SFStringWidgetSchema, SFUploadWidgetSchema } from '@delon/form';
 import { assetHost } from '@env/environment';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ErrorResponse, JsonApiError } from '@shared';
@@ -92,7 +92,17 @@ export class UserUserEditComponent implements OnInit {
             minLength: 8,
             ui: {
               type: 'password',
-            },
+              change: (val) => {
+                const password = this.sf.getValue('/attributes/password');
+                const confirmPasswordProp = this.sf.getProperty('/attributes/confirm_password');
+                if (val && val !== password) {
+                  confirmPasswordProp!.setParentAndPlatErrors([{
+                    keyword: 'not_match',
+                    message: 'Not match with password',
+                  }], '');
+                }
+              },
+            } as SFStringWidgetSchema,
           },
         },
         required: this.requiredAttrs,
