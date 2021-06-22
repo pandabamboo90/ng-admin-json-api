@@ -1,10 +1,10 @@
-<page-header [action]="phActionTpl">
+<page-header title="User List" [action]="phActionTpl">
   <ng-template #phActionTpl>
     <button (click)="add()" nz-button nzType="primary">Add new User</button>
   </ng-template>
 </page-header>
-<nz-card>
 
+<nz-card>
   <st #st
       [data]="data"
       [columns]="columns"
