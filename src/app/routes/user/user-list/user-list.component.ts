@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { User, UserApi } from '@core';
 import { STChange, STColumn, STComponent, STData } from '@delon/abc/st';
 import { _HttpClient } from '@delon/theme';
+import { assetHost } from '@env/environment';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map as _map } from 'lodash-es';
 import { DocumentCollection } from 'ngx-jsonapi';
@@ -27,6 +28,7 @@ export class UserUserListComponent implements OnInit {
   @ViewChild('st') private readonly st!: STComponent;
   columns: STColumn[] = [
     { title: '#', index: 'id' },
+    { title: 'Avatar', type: 'img', width: 60, index: 'attributes.image.thumbnail' },
     { title: 'Name', index: 'attributes.name' },
     { title: 'Email', index: 'attributes.email' },
     { title: 'Mobile', index: 'attributes.mobile_phone' },
@@ -89,6 +91,14 @@ export class UserUserListComponent implements OnInit {
         filter(res => res.loaded), // Only get the response when every resources are loaded !
         map((res) => {
           _map(res.data, (user: User) => {
+            if (user.attributes.image) {
+              user.attributes.image.thumbnail = `${assetHost.baseUrl}${user.attributes.image.thumbnail}`;
+            } else {
+              user.attributes.image = {
+                thumbnail: `/assets/img/avatar.svg`,
+              };
+            }
+
             if (user.attributes.locked) {
               user.status.type = 'default';
               user.status.text = 'Locked';

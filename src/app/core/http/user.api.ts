@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Role } from '@src/app/core';
-import { Service, Resource, DocumentCollection, DocumentResource } from 'ngx-jsonapi';
+import { DocumentCollection, Resource, Service } from 'ngx-jsonapi';
 
 export class User extends Resource {
   status = {
     type: 'success',
-    text: 'Active'
-  }
+    text: 'Active',
+  };
 
   attributes = {
     name: '',
@@ -15,7 +15,8 @@ export class User extends Resource {
     image: {
       data: null,
       url: null,
-    },
+      thumbnail: null,
+    } as any,
     locked: false,
   };
 
