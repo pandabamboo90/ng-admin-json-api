@@ -15,6 +15,9 @@
       [loading]="loading"
       (change)="onPageChange($event)"
   >
+    <ng-template st-row="cell-profile-img-tpl" let-item>
+      <user-profile-image [src]="item.attributes.image?.thumbnail"></user-profile-image>
+    </ng-template>
     <ng-template st-row="cell-locked-tpl" let-item>
       <user-status [attributes]="item.attributes"></user-status>
     </ng-template>

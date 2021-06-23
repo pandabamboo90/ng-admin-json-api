@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { DelonACLModule } from '@delon/acl';
 import { DelonFormModule } from '@delon/form';
 import { AlainThemeModule } from '@delon/theme';
+import { UserProfileImageComponent } from '@src/app/shared/components/user-profile-image.component';
 import { UserStatusComponent } from './components/user-status.component';
 
 
@@ -31,7 +32,8 @@ const EXTERNAL_MODULES: Type<any>[] = [];
 
 // #region your components & directives
 const COMPONENTS: Type<any>[] = [
-  UserStatusComponent
+  UserStatusComponent,
+  UserProfileImageComponent
 ];
 const DIRECTIVES: Type<any>[] = [];
 // #endregion

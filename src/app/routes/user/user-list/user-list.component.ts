@@ -29,7 +29,7 @@ export class UserUserListComponent implements OnInit {
   @ViewChild('st') private readonly st!: STComponent;
   columns: STColumn[] = [
     { title: '#', index: 'id' },
-    { title: 'Avatar', type: 'img', width: 60, index: 'attributes.image.thumbnail' },
+    { title: 'Image', render: 'cell-profile-img-tpl' },
     { title: 'Name', index: 'attributes.name' },
     { title: 'Email', index: 'attributes.email' },
     { title: 'Mobile', index: 'attributes.mobile_phone' },
@@ -53,7 +53,6 @@ export class UserUserListComponent implements OnInit {
           iif: (record: User) => !record.attributes.locked && record.isActive,
           click: (record: User, _modal, comp) => {
             record.attributes.locked = true;
-            this.setDefaultAvatarUrl(record);
             comp?.setRow(record, {});
 
             record.save()
@@ -74,7 +73,6 @@ export class UserUserListComponent implements OnInit {
           click: (record: User, _modal, comp) => {
             record.attributes.locked = false;
             record.attributes.locked_at = null;
-            this.setDefaultAvatarUrl(record);
             comp?.setRow(record, {});
 
             record.save()
@@ -160,10 +158,6 @@ export class UserUserListComponent implements OnInit {
           this.cdr.detectChanges();
         }),
         filter(res => res.loaded), // Only get the response when every resources are loaded !
-        map((res) => {
-          _map(res.data, (user: User) => this.setDefaultAvatarUrl(user));
-          return res;
-        }),
         finalize(() => {
           this.loading = false;
           this.cdr.detectChanges();
@@ -179,20 +173,6 @@ export class UserUserListComponent implements OnInit {
     if (ev.type === 'pi') {
       this.meta.page = ev.pi;
       this.fetchUserList();
-    }
-  }
-
-  setDefaultAvatarUrl(user: User) {
-    const defaultAvatarImage = `/assets/img/avatar.svg`;
-
-    if (!user.attributes.image) {
-      user.attributes.image = {
-        thumbnail: defaultAvatarImage,
-      };
-    } else {
-      if (user.attributes.image.thumbnail !== defaultAvatarImage) {
-        user.attributes.image.thumbnail = `${assetHost.baseUrl}${user.attributes.image.thumbnail}`;
-      }
     }
   }
 }
