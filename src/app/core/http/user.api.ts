@@ -18,11 +18,17 @@ export class User extends Resource {
       thumbnail: null,
     } as any,
     locked: false,
+    locked_at: null,
+    deleted_at: null as string | null,
   };
 
   relationships: any = {
     roles: new DocumentCollection<Role>(),
   };
+
+  get isActive() {
+    return !this.attributes.deleted_at
+  }
 }
 
 @Injectable()

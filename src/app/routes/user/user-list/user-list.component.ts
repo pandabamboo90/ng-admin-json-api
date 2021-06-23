@@ -5,7 +5,8 @@ import { STChange, STColumn, STComponent, STData } from '@delon/abc/st';
 import { _HttpClient } from '@delon/theme';
 import { assetHost } from '@env/environment';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map as _map, assign as _assign } from 'lodash-es';
+import { map as _map } from 'lodash-es';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { DocumentCollection } from 'ngx-jsonapi';
 import { filter, finalize, map, tap } from 'rxjs/operators';
 
@@ -40,8 +41,49 @@ export class UserUserListComponent implements OnInit {
         {
           text: 'Edit',
           icon: 'edit',
+          iif: (record => record.isActive),
           click: (item: any) => {
             this.router.navigateByUrl(`/user/${item.id}`);
+          },
+        },
+        {
+          text: 'Lock',
+          className: 'text-warning',
+          icon: 'lock',
+          iif: (record: User) => !record.attributes.locked && record.isActive,
+          click: (record: User, _modal, comp) => {
+            record.attributes.locked = true;
+            this.setDefaultAvatarUrl(record);
+            comp?.setRow(record, {});
+
+            record.save()
+              .pipe(
+                untilDestroyed(this),
+              )
+              .subscribe((res: any) => {
+                this.msgSrv.success('Locked !');
+                record.attributes.locked_at = res.data.attributes.locked_at;
+              });
+          },
+        },
+        {
+          text: 'Unlock',
+          className: 'text-purple',
+          icon: 'unlock',
+          iif: (record: User) => record.attributes.locked && record.isActive,
+          click: (record: User, _modal, comp) => {
+            record.attributes.locked = false;
+            record.attributes.locked_at = null;
+            this.setDefaultAvatarUrl(record);
+            comp?.setRow(record, {});
+
+            record.save()
+              .pipe(
+                untilDestroyed(this),
+              )
+              .subscribe((res: any) => {
+                this.msgSrv.success('Unlocked !');
+              });
           },
         },
         {
@@ -54,8 +96,34 @@ export class UserUserListComponent implements OnInit {
             okType: 'danger',
             icon: 'check-circle',
           },
-          click: (record, _modal, comp) => {
-            comp!.removeRow(record);
+          iif: (record => record.isActive),
+          click: (record: User, _modal, comp) => {
+            this.http.delete(`/users/${record.id}`)
+              .pipe(
+                untilDestroyed(this),
+              )
+              .subscribe((res) => {
+                this.msgSrv.success(res.meta.message);
+                record.attributes.deleted_at = res.data.attributes.deleted_at;
+                comp?.setRow(record, {});
+              });
+          },
+        },
+        {
+          text: 'Restore',
+          className: 'text-default',
+          icon: 'undo',
+          iif: (record => !record.isActive),
+          click: (record: User, _modal, comp) => {
+            this.http.put(`/users/${record.id}/restore`)
+              .pipe(
+                untilDestroyed(this),
+              )
+              .subscribe((res) => {
+                this.msgSrv.success(res.meta.message);
+                record.attributes.deleted_at = null;
+                comp?.setRow(record, {});
+              });
           },
         },
       ],
@@ -65,6 +133,7 @@ export class UserUserListComponent implements OnInit {
   constructor(private http: _HttpClient,
               private router: Router,
               private userApi: UserApi,
+              private msgSrv: NzMessageService,
               private cdr: ChangeDetectorRef) {
   }
 
@@ -87,39 +156,22 @@ export class UserUserListComponent implements OnInit {
       .pipe(
         untilDestroyed(this),
         tap(() => {
-          this.loading = true
+          this.loading = true;
           this.cdr.detectChanges();
         }),
         filter(res => res.loaded), // Only get the response when every resources are loaded !
         map((res) => {
-          _map(res.data, (user: User) => {
-            if (user.attributes.image) {
-              user.attributes.image.thumbnail = `${assetHost.baseUrl}${user.attributes.image.thumbnail}`;
-            } else {
-              user.attributes.image = {
-                thumbnail: `/assets/img/avatar.svg`,
-              };
-            }
-
-            if (user.attributes.locked) {
-              user.status.type = 'default';
-              user.status.text = 'Locked';
-            } else {
-              user.status.type = 'success';
-              user.status.text = 'Active';
-            }
-          });
-
+          _map(res.data, (user: User) => this.setDefaultAvatarUrl(user));
           return res;
         }),
         finalize(() => {
-          this.loading = false
+          this.loading = false;
           this.cdr.detectChanges();
         }), // Success or not, turn off loading
       )
       .subscribe((res: DocumentCollection<User>) => {
-        this.data = _assign([], res.data);
-        this.meta = _assign({}, res.meta);
+        this.data = [...res.data];
+        this.meta = { ...res.meta };
       });
   }
 
@@ -127,6 +179,20 @@ export class UserUserListComponent implements OnInit {
     if (ev.type === 'pi') {
       this.meta.page = ev.pi;
       this.fetchUserList();
+    }
+  }
+
+  setDefaultAvatarUrl(user: User) {
+    const defaultAvatarImage = `/assets/img/avatar.svg`;
+
+    if (!user.attributes.image) {
+      user.attributes.image = {
+        thumbnail: defaultAvatarImage,
+      };
+    } else {
+      if (user.attributes.image.thumbnail !== defaultAvatarImage) {
+        user.attributes.image.thumbnail = `${assetHost.baseUrl}${user.attributes.image.thumbnail}`;
+      }
     }
   }
 }

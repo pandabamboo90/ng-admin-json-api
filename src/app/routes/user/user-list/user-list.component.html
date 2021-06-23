@@ -16,7 +16,7 @@
       (change)="onPageChange($event)"
   >
     <ng-template st-row="cell-locked-tpl" let-item>
-      <nz-badge [nzStatus]="item.status.type" [nzText]="item.status.text"></nz-badge>
+      <user-status [attributes]="item.attributes"></user-status>
     </ng-template>
     <ng-template st-row="cell-roles-tpl" let-item>
       <nz-tag *ngFor="let role of item.relationships.roles.data">

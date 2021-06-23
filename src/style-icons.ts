@@ -16,6 +16,7 @@ import {
   TagsOutline,
   TransactionOutline,
   UndoOutline,
+  UnlockOutline,
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS = [
@@ -34,4 +35,5 @@ export const ICONS = [
   ClusterOutline,
   CaretLeftOutline,
   UndoOutline,
+  UnlockOutline,
 ];

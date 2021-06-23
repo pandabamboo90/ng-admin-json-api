@@ -3,6 +3,11 @@ export * from './interfaces/response-meta.interface';
 export * from './interfaces/json-api-error.interface';
 
 // Components
+export * from './components/user-status.component';
+
+// Pipes
+
+// Directives
 
 // Utils
 export * from './utils/yuan';
