@@ -41,7 +41,6 @@ export class StartupService {
       }),
     ).subscribe(([appData, currentUserData]) => {
         // User information: including name, avatar, email address
-        currentUserData.data.avatar = './assets/img/avatar.svg';
         this.settingService.setUser(currentUserData.data);
         // Application data
         const res: any = appData;

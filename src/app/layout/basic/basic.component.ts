@@ -45,10 +45,10 @@ import { environment } from '@env/environment';
       </layout-default-header-item>
       <ng-template #asideUserTpl>
         <div nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" class="alain-default__aside-user">
-          <nz-avatar class="alain-default__aside-user-avatar" [nzSrc]="user.avatar"></nz-avatar>
+          <user-profile-image [src]="user.attributes.image?.thumbnail" class="alain-default__aside-user-avatar"></user-profile-image>
           <div class="alain-default__aside-user-info">
-            <strong>{{ user.name }}</strong>
-            <p class="mb0">{{ user.email }}</p>
+            <strong>{{ user.attributes.name }}</strong>
+            <p class="mb0">{{ user.attributes.email }}</p>
           </div>
         </div>
         <nz-dropdown-menu #userMenu="nzDropdownMenu">

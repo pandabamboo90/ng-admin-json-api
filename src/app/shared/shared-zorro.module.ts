@@ -1,4 +1,5 @@
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -54,4 +55,5 @@ export const SHARED_ZORRO_MODULES = [
   NzNotificationModule,
   NzBreadCrumbModule,
   NzSkeletonModule,
+  NzAutocompleteModule,
 ];

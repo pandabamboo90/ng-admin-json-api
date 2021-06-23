@@ -7,15 +7,7 @@ import { NoticeIconModule } from '@delon/abc/notice-icon';
 import { LayoutDefaultModule } from '@delon/theme/layout-default';
 import { SettingDrawerModule } from '@delon/theme/setting-drawer';
 import { ThemeBtnModule } from '@delon/theme/theme-btn';
-import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
-import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { NzBadgeModule } from 'ng-zorro-antd/badge';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzGridModule } from 'ng-zorro-antd/grid';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { SharedModule } from '@shared';
 
 import { LayoutBasicComponent } from './basic/basic.component';
 import { HeaderClearStorageComponent } from './basic/widgets/clear-storage.component';
@@ -26,7 +18,7 @@ import { LayoutBlankComponent } from './blank/blank.component';
 
 const COMPONENTS = [LayoutBasicComponent, LayoutBlankComponent];
 
-const HEADERCOMPONENTS = [
+const HEADER_COMPONENTS = [
   HeaderSearchComponent,
   HeaderFullScreenComponent,
   HeaderClearStorageComponent,
@@ -49,17 +41,9 @@ const PASSPORT = [
     LayoutDefaultModule,
     NoticeIconModule,
     GlobalFooterModule,
-    NzDropDownModule,
-    NzInputModule,
-    NzAutocompleteModule,
-    NzGridModule,
-    NzFormModule,
-    NzSpinModule,
-    NzBadgeModule,
-    NzAvatarModule,
-    NzIconModule,
+    SharedModule,
   ],
-  declarations: [...COMPONENTS, ...HEADERCOMPONENTS, ...PASSPORT],
+  declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT],
   exports: [...COMPONENTS, ...PASSPORT],
 })
 export class LayoutModule { }
