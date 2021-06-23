@@ -69,8 +69,8 @@ import { environment } from '@env/environment';
 })
 export class LayoutBasicComponent {
   options: LayoutDefaultOptions = {
-    logoExpanded: `./assets/logo-full.svg`,
-    logoCollapsed: `./assets/logo.svg`,
+    logoExpanded: `./assets/img/logo-full.svg`,
+    logoCollapsed: `./assets/img/logo.svg`,
   };
   searchToggleStatus = false;
   showSettingDrawer = !environment.production;
