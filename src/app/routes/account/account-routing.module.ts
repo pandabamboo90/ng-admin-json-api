@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AccountSettingsPasswordComponent } from './settings/password/password.component';
 import { AccountSettingsProfileComponent } from './settings/profile/profile.component';
 import { AccountSettingsComponent } from './settings/settings.component';
 
@@ -14,11 +15,11 @@ const routes: Routes = [
         component: AccountSettingsProfileComponent,
         data: { titleI18n: 'pro-account-settings' },
       },
-      // {
-      //   path: 'security',
-      //   component: AccountSettingsSecurityComponent,
-      //   data: { titleI18n: 'pro-account-settings' },
-      // },
+      {
+        path: 'password',
+        component: AccountSettingsPasswordComponent,
+        data: { titleI18n: 'pro-account-settings' },
+      },
     ],
   },
 ];

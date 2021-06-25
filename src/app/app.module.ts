@@ -6,6 +6,7 @@ import { APP_INITIALIZER, LOCALE_ID, NgModule, Type } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
+  AdminApi,
   DefaultInterceptor,
   DeviseTokenAuthInterceptor,
   RoleApi,
@@ -57,7 +58,7 @@ const APP_INIT_PROVIDES = [
 
 const JSON_API_PROVIDES = [
   NgxJsonapiRegisterService,
-  UserApi, RoleApi,
+  UserApi, RoleApi, AdminApi,
 ];
 
 @NgModule({

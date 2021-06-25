@@ -35,7 +35,7 @@ export class UserUserEditComponent implements OnInit {
   user!: User;
   roles!: Role[];
   loading = false;
-  requiredAttrs: string[] = ['name', 'email', 'mobile_phone', 'password', 'confirm_password'];
+  requiredAttrs: string[] = ['name', 'email', 'mobile_phone', 'password', 'password_confirmation'];
   schema: SFSchema = {
     type: 'object',
     properties: {
@@ -86,7 +86,7 @@ export class UserUserEditComponent implements OnInit {
               type: 'password',
             },
           },
-          confirm_password: {
+          password_confirmation: {
             type: 'string',
             title: 'Confirm password',
             minLength: 8,
@@ -94,7 +94,7 @@ export class UserUserEditComponent implements OnInit {
               type: 'password',
               change: (val) => {
                 const password = this.sf.getValue('/attributes/password');
-                const confirmPasswordProp = this.sf.getProperty('/attributes/confirm_password');
+                const confirmPasswordProp = this.sf.getProperty('/attributes/password_confirmation');
                 if (val && val !== password) {
                   confirmPasswordProp!.setParentAndPlatErrors([{
                     keyword: 'not_match',
@@ -229,9 +229,9 @@ export class UserUserEditComponent implements OnInit {
     this.sf.getProperty('/attributes/email')!.schema.readOnly = true;
 
     // Remove the password fields as we dont' want user to accidentally update password
-    this.sf.getProperty('/attributes')!.schema.required = _omit(this.requiredAttrs, ['password', 'confirm_password']) as string[];
+    this.sf.getProperty('/attributes')!.schema.required = _omit(this.requiredAttrs, ['password', 'password_confirmation']) as string[];
     this.sf.getProperty('/attributes/password')?.setVisible(false);
-    this.sf.getProperty('/attributes/confirm_password')?.setVisible(false);
+    this.sf.getProperty('/attributes/password_confirmation')?.setVisible(false);
   }
 
   private buildRoleCheckboxes(initialValues: string[] = []) {

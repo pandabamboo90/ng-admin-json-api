@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { User } from '@core';
+import { Admin, User } from '@core';
 import { SFComponent, SFSchema, SFUploadWidgetSchema } from '@delon/form';
 import { _HttpClient } from '@delon/theme';
 import { assetHost } from '@env/environment';
@@ -23,7 +23,7 @@ export class AccountSettingsProfileComponent implements OnInit {
   @ViewChild('sf', { static: false }) sf!: SFComponent;
 
   loading = true;
-  user!: User;
+  me!: User | Admin;
 
   schema: SFSchema = {
     type: 'object',
@@ -81,17 +81,15 @@ export class AccountSettingsProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchUserProfile()
-      .subscribe((user) => {
-        this.user = user;
+      .subscribe((me) => {
         this.setAttrValues();
       });
   }
 
   submit(formData: any): void {
-    this.user.attributes = _assign({}, this.user.attributes, _omit(formData.attributes, ['image']));
+    this.me.attributes = _assign({}, this.me.attributes, _omit(formData.attributes, ['image']));
 
-    this.user
-      .save()
+    this.http.put('/me/profile', {data: this.me})
       .pipe(
         untilDestroyed(this),
         tap(() => {
@@ -115,15 +113,19 @@ export class AccountSettingsProfileComponent implements OnInit {
       });
   }
 
-  fetchUserProfile(): Observable<User> {
+  fetchUserProfile(): Observable<User | Admin> {
     return this.http.get('/me/profile')
       .pipe(
         untilDestroyed(this),
         map((res) => {
-          const user = new User();
-          user.attributes = res.data.attributes;
+          if (res.data.type === 'user') {
+            this.me = new User();
+          } else if (res.data.type === 'admin') {
+            this.me = new Admin();
+          }
+          this.me.fill(res);
 
-          return user;
+          return this.me;
         }),
         finalize(() => {
           this.loading = false;
@@ -133,7 +135,7 @@ export class AccountSettingsProfileComponent implements OnInit {
   }
 
   private setAttrValues() {
-    _each(this.user.attributes, (attrValue: any, attrKey) => {
+    _each(this.me.attributes, (attrValue: any, attrKey) => {
       const formProp = this.sf.getProperty(`/attributes/${attrKey}`);
 
       if (formProp) {
@@ -161,10 +163,10 @@ export class AccountSettingsProfileComponent implements OnInit {
     reader.readAsDataURL(file as any);
     reader.onload = (e: any) => {
       const base64String = e.target.result;
-      if (this.user.attributes.image) {
-        this.user.attributes.image.data = base64String;
+      if (this.me.attributes.image) {
+        this.me.attributes.image.data = base64String;
       } else {
-        this.user.attributes.image = { data: base64String };
+        this.me.attributes.image = { data: base64String };
       }
 
       imageUploaderProp!.schema.enum = [{ url: base64String }];

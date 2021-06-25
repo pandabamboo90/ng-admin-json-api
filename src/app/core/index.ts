@@ -6,3 +6,4 @@ export * from './startup/startup.service';
 
 export * from './http/user.api'
 export * from './http/role.api'
+export * from './http/admin.api'
