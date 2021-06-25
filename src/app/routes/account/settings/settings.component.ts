@@ -33,7 +33,9 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy {
     },
   ];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef, private el: ElementRef<HTMLElement>) {
+  constructor(private router: Router,
+              private cdr: ChangeDetectorRef,
+              private el: ElementRef<HTMLElement>) {
     this.router$ = this.router.events.pipe(filter((e) => e instanceof ActivationEnd)).subscribe(() => this.setActive());
   }
 
@@ -44,6 +46,8 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy {
       i.selected = i.key === key;
     });
     this.title = this.menus.find((w) => w.selected)!.title;
+
+    this.cdr.detectChanges();
   }
 
   to(item: { key: string }): void {
@@ -66,6 +70,7 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.setActive();
+
     this.resize$ = fromEvent(window, 'resize')
       .pipe(debounceTime(200))
       .subscribe(() => this.resize());
