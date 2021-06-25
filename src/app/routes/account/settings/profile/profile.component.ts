@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Admin, User } from '@core';
 import { SFComponent, SFSchema, SFUploadWidgetSchema } from '@delon/form';
-import { _HttpClient } from '@delon/theme';
+import { _HttpClient, SettingsService } from '@delon/theme';
 import { assetHost } from '@env/environment';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ErrorResponse, JsonApiError } from '@shared';
@@ -9,7 +9,7 @@ import { assign as _assign, each as _each, get as _get, omit as _omit } from 'lo
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable } from 'rxjs';
-import { finalize, map, tap } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -18,11 +18,11 @@ import { finalize, map, tap } from 'rxjs/operators';
   styleUrls: ['./profile.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountSettingsProfileComponent implements OnInit {
+export class AccountSettingsProfileComponent implements OnInit, AfterViewInit {
 
   @ViewChild('sf', { static: false }) sf!: SFComponent;
 
-  loading = true;
+  loading = false;
   me!: User | Admin;
 
   schema: SFSchema = {
@@ -76,20 +76,22 @@ export class AccountSettingsProfileComponent implements OnInit {
 
   constructor(private http: _HttpClient,
               private cdr: ChangeDetectorRef,
-              private msgSrv: NzMessageService) {
+              private msgSrv: NzMessageService,
+              private settingService: SettingsService) {
   }
 
   ngOnInit(): void {
-    this.fetchUserProfile()
-      .subscribe((me) => {
-        this.setAttrValues();
-      });
+    this.me = <Admin | User>this.settingService.user;
+  }
+
+  ngAfterViewInit(): void {
+    this.setAttrValues();
   }
 
   submit(formData: any): void {
     this.me.attributes = _assign({}, this.me.attributes, _omit(formData.attributes, ['image']));
 
-    this.http.put('/me/profile', {data: this.me})
+    this.http.put('/me/profile', { data: this.me })
       .pipe(
         untilDestroyed(this),
         tap(() => {
@@ -101,6 +103,7 @@ export class AccountSettingsProfileComponent implements OnInit {
         }), // Success or not, turn off loading
       )
       .subscribe(res => {
+        this.settingService.setUser(res.data);
         this.msgSrv.success('Updated successfully !');
       }, (errRes: ErrorResponse) => {
         _each(errRes.errors, (errorObj: JsonApiError) => {
@@ -113,28 +116,7 @@ export class AccountSettingsProfileComponent implements OnInit {
       });
   }
 
-  fetchUserProfile(): Observable<User | Admin> {
-    return this.http.get('/me/profile')
-      .pipe(
-        untilDestroyed(this),
-        map((res) => {
-          if (res.data.type === 'user') {
-            this.me = new User();
-          } else if (res.data.type === 'admin') {
-            this.me = new Admin();
-          }
-          this.me.fill(res);
-
-          return this.me;
-        }),
-        finalize(() => {
-          this.loading = false;
-          this.cdr.detectChanges();
-        }), // Success or not, turn off loading
-      );
-  }
-
-  private setAttrValues() {
+  private setAttrValues(): void {
     _each(this.me.attributes, (attrValue: any, attrKey) => {
       const formProp = this.sf.getProperty(`/attributes/${attrKey}`);
 

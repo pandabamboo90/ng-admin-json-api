@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { assetHost } from '@env/environment';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { NzSizeLDSType } from 'ng-zorro-antd/core/types';
@@ -11,7 +11,7 @@ import { NzSizeLDSType } from 'ng-zorro-antd/core/types';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserProfileImageComponent implements OnInit {
+export class UserProfileImageComponent implements OnChanges {
 
   @Input() src!: string;
   @Input() size!: NzSizeLDSType | number;
@@ -19,11 +19,15 @@ export class UserProfileImageComponent implements OnInit {
   constructor() {
   }
 
-  ngOnInit() {
-    if (!this.src) {
+  ngOnChanges(changes: SimpleChanges) {
+    this.setSrc(changes.src.currentValue);
+  }
+
+  private setSrc(value: string) {
+    if (!value) {
       this.src = `/assets/img/avatar.svg`;
     } else {
-      this.src = `${assetHost.baseUrl}${this.src}`;
+      this.src = `${assetHost.baseUrl}${value}`;
     }
   }
 }
