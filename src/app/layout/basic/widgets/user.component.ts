@@ -13,11 +13,7 @@ import { SettingsService, User } from '@delon/theme';
     </div>
     <nz-dropdown-menu #userMenu="nzDropdownMenu">
       <div nz-menu class="width-sm">
-        <div nz-menu-item routerLink="/pro/account/center">
-          <i nz-icon nzType="user" class="mr-sm"></i>
-          Account Center
-        </div>
-        <div nz-menu-item routerLink="/pro/account/settings">
+        <div nz-menu-item routerLink="/account/settings">
           <i nz-icon nzType="setting" class="mr-sm"></i>
           Account Settings
         </div>

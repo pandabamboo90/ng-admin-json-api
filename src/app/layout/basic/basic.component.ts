@@ -53,8 +53,7 @@ import { environment } from '@env/environment';
         </div>
         <nz-dropdown-menu #userMenu="nzDropdownMenu">
           <ul nz-menu>
-            <li nz-menu-item routerLink="/pro/account/center">Account Center</li>
-            <li nz-menu-item routerLink="/pro/account/settings">Account Settings</li>
+            <li nz-menu-item routerLink="/account/settings">Account Settings</li>
           </ul>
         </nz-dropdown-menu>
       </ng-template>

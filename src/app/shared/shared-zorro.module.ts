@@ -26,6 +26,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
 
 export const SHARED_ZORRO_MODULES = [
   NzFormModule,
@@ -56,4 +57,5 @@ export const SHARED_ZORRO_MODULES = [
   NzBreadCrumbModule,
   NzSkeletonModule,
   NzAutocompleteModule,
+  NzUploadModule,
 ];

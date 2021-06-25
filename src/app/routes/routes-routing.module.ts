@@ -21,6 +21,7 @@ const routes: Routes = [
       { path: 'exception', loadChildren: () => import('./exception/exception.module').then(m => m.ExceptionModule) },
       { path: 'admin', loadChildren: () => import('./admin/admin.module').then((m) => m.AdminModule) },
       { path: 'user', loadChildren: () => import('./user/user.module').then((m) => m.UserModule) },
+      { path: 'account', loadChildren: () => import('./account/account.module').then((m) => m.AccountModule) },
     ],
   },
   // 空白布局
