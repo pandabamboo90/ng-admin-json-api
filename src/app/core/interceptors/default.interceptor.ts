@@ -174,6 +174,7 @@ export class DefaultInterceptor implements HttpInterceptor {
 
   private handleData(ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandler): Observable<any> {
     this.checkStatus(ev);
+
     // Business processing: some common operations
     switch (ev.status) {
       case 0:
@@ -210,6 +211,11 @@ export class DefaultInterceptor implements HttpInterceptor {
       case 404:
       case 500:
         this.goTo(`/exception/${ev.status}`);
+        break;
+      case 422:
+        if (ev instanceof HttpErrorResponse) {
+          return throwError(ev.error);
+        }
         break;
       default:
         if (ev instanceof HttpErrorResponse) {

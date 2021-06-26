@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Admin, User } from '@core';
 import { SFComponent, SFSchema, SFStringWidgetSchema } from '@delon/form';
@@ -7,8 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ErrorResponse, JsonApiError } from '@shared';
 import { each as _each } from 'lodash-es';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { throwError } from 'rxjs';
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -83,8 +81,7 @@ export class AccountSettingsPasswordComponent implements OnInit {
   }
 
   submit(formData: any): void {
-
-    this.http.put(this.updatePasswordUrl, formData)
+    this.http.put(this.updatePasswordUrl, { data: formData })
       .pipe(
         untilDestroyed(this),
         tap(() => {
@@ -94,9 +91,6 @@ export class AccountSettingsPasswordComponent implements OnInit {
           this.loading = false;
           this.cdr.detectChanges();
         }), // Success or not, turn off loading
-        catchError((res: HttpErrorResponse) => {
-          return throwError(res.error);
-        }),
       )
       .subscribe(() => {
         this.sf.refreshSchema();
