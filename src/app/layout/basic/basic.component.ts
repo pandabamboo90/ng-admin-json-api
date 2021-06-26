@@ -25,6 +25,10 @@ import { environment } from '@env/environment';
 <!--      <layout-default-header-item direction="middle">-->
 <!--        <header-search class="alain-default__search" [toggleChange]="searchToggleStatus"></header-search>-->
 <!--      </layout-default-header-item>-->
+
+      <!-- ================================================
+      Top Navigation - Settings template
+      ================================================= -->
       <layout-default-header-item direction="right" hidden="mobile">
         <div layout-default-header-item-trigger nz-dropdown [nzDropdownMenu]="settingsMenu" nzTrigger="click" nzPlacement="bottomRight">
           <i nz-icon nzType="setting"></i>
@@ -40,9 +44,17 @@ import { environment } from '@env/environment';
           </div>
         </nz-dropdown-menu>
       </layout-default-header-item>
+
+      <!-- ================================================
+      Top Navigation - User dropdown
+      ================================================= -->
       <layout-default-header-item direction="right">
         <header-user></header-user>
       </layout-default-header-item>
+
+      <!-- ================================================
+      Sidebar template
+      ================================================= -->
       <ng-template #asideUserTpl>
         <div nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" class="alain-default__aside-user">
           <user-profile-image [src]="user.attributes.image?.thumbnail" class="alain-default__aside-user-avatar"></user-profile-image>
@@ -57,6 +69,10 @@ import { environment } from '@env/environment';
           </ul>
         </nz-dropdown-menu>
       </ng-template>
+
+      <!-- ================================================
+      Content template
+      ================================================= -->
       <ng-template #contentTpl>
         <router-outlet></router-outlet>
       </ng-template>

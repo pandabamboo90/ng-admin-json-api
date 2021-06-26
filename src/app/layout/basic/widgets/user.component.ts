@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DoCheck, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { SettingsService, User } from '@delon/theme';
@@ -27,18 +27,24 @@ import { SettingsService, User } from '@delon/theme';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderUserComponent {
+export class HeaderUserComponent implements DoCheck {
+
   get user(): User {
     return this.settings.user;
   }
 
   constructor(private settings: SettingsService,
               private router: Router,
+              private cdr: ChangeDetectorRef,
               @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
   }
 
   logout(): void {
     this.tokenService.clear();
     this.router.navigateByUrl(this.tokenService.login_url!);
+  }
+
+  ngDoCheck() {
+    this.cdr.markForCheck();
   }
 }
