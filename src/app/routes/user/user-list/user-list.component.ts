@@ -3,20 +3,18 @@ import { Router } from '@angular/router';
 import { User, UserApi } from '@core';
 import { STChange, STColumn, STComponent, STData } from '@delon/abc/st';
 import { _HttpClient } from '@delon/theme';
-import { assetHost } from '@env/environment';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map as _map } from 'lodash-es';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { DocumentCollection } from 'ngx-jsonapi';
-import { filter, finalize, map, tap } from 'rxjs/operators';
+import { filter, finalize, tap } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-user-user-list',
+  selector: 'app-user-list',
   templateUrl: './user-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserUserListComponent implements OnInit {
+export class UserListComponent implements OnInit {
 
   loading = false;
   data: STData[] = [];

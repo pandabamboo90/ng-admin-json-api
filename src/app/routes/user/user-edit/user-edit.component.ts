@@ -21,11 +21,11 @@ import { concatMap, filter, finalize, tap } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-user-user-edit',
+  selector: 'app-user-edit',
   templateUrl: './user-edit.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserUserEditComponent implements OnInit {
+export class UserEditComponent implements OnInit {
 
   @ViewChild('sf', { static: false }) sf!: SFComponent;
 

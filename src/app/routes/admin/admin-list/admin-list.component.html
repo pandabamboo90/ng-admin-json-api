@@ -1,10 +1,10 @@
-<page-header [action]="phActionTpl">
+<page-header title="Admin List" [action]="phActionTpl">
   <ng-template #phActionTpl>
     <button (click)="add()" nz-button nzType="primary">Add new Admin</button>
   </ng-template>
 </page-header>
-<nz-card>
 
+<nz-card>
   <st #st
       [data]="data"
       [columns]="columns"
@@ -15,33 +15,11 @@
       [loading]="loading"
       (change)="onPageChange($event)"
   >
-
-    <ng-template st-row="wallets-cell-tpl" let-item let-idx="index">
-      <ul>
-        <li *ngFor="let wallet of item.wallets">
-          <strong>ID:</strong> {{ wallet?.id }}<br>
-          <strong>Token:</strong> {{ wallet?.token }}<br>
-          <strong>Seed:</strong> {{ wallet?.seed }}<br>
-
-          <div *ngIf="wallet.cashes">
-            <br>
-            <strong>Amount</strong>
-            <br>
-            <nz-tag *ngIf="wallet.cashes[0]"
-                    [nzColor]="'geekblue'">
-              {{wallet.cashes[0].amount}} {{wallet.cashes[0].cash_type?.toUpperCase()}}
-            </nz-tag>
-            <nz-tag *ngIf="wallet.cashes[1]"
-                    [nzColor]="'geekblue'">
-              {{wallet.cashes[1].amount}} {{wallet.cashes[1].cash_type?.toUpperCase()}}
-            </nz-tag>
-            <nz-tag *ngIf="wallet.cashes[2]"
-                    [nzColor]="'geekblue'">
-              {{wallet.cashes[2].amount}} {{wallet.cashes[2].cash_type?.toUpperCase()}}
-            </nz-tag>
-          </div>
-        </li>
-      </ul>
+    <ng-template st-row="cell-profile-img-tpl" let-item>
+      <user-profile-image [src]="item.attributes.image?.thumbnail"></user-profile-image>
+    </ng-template>
+    <ng-template st-row="cell-locked-tpl" let-item>
+      <user-status [attributes]="item.attributes"></user-status>
     </ng-template>
   </st>
 </nz-card>

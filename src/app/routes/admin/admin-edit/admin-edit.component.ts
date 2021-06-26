@@ -1,116 +1,222 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SFComponent, SFSchema } from '@delon/form';
-import { _HttpClient } from '@delon/theme';
+import { Admin, AdminApi } from '@core';
+import { SFComponent, SFSchema, SFStringWidgetSchema, SFUploadWidgetSchema } from '@delon/form';
+import { assetHost } from '@env/environment';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { first as _first, map as _map, omit as _omit } from 'lodash-es';
+import { ErrorResponse, JsonApiError } from '@shared';
+import { assign as _assign, each as _each, get as _get, omit as _omit } from 'lodash-es';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
+import { Observable } from 'rxjs';
+import { filter, finalize, tap } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-admin-admin-edit',
+  selector: 'app-admin-edit',
   templateUrl: './admin-edit.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminAdminEditComponent implements OnInit {
+export class AdminEditComponent implements OnInit {
 
   @ViewChild('sf', { static: false }) sf!: SFComponent;
 
-  id!: number | string;
+  id!: string;
   title!: string;
   subTitle!: string;
-  formData!: any;
+  admin!: Admin;
+  loading = false;
+  requiredAttrs: string[] = ['name', 'email', 'mobile_phone', 'password', 'password_confirmation'];
   schema: SFSchema = {
+    type: 'object',
     properties: {
-      tenant_id: {
-        title: 'Tenant',
-        type: 'string',
-      },
-      first_name: {
-        title: 'First name',
-        type: 'string',
-      },
-      last_name: {
-        title: 'Last name',
-        type: 'string',
-      },
-      email: {
-        type: 'string',
-        title: 'Email',
-        format: 'email',
-      },
-      country_code: {
-        type: 'string',
-        title: 'Country code',
-      },
-      cellphone: {
-        type: 'string',
-        title: 'Phone number',
+      attributes: {
+        type: 'object',
+        properties: {
+          name: {
+            title: 'Name',
+            type: 'string',
+          },
+          image: {
+            type: 'object',
+            properties: {
+              uploader: {
+                title: 'Profile Image',
+                type: 'string',
+                ui: {
+                  widget: 'upload',
+                  type: 'select',
+                  urlReName: 'url',
+                  text: ' ',
+                  hint: '',
+                  listType: 'picture-card',
+                  fileType: 'image/png,image/jpeg,image/gif,image/bmp',
+                  multiple: false,
+                  beforeUpload: this.beforeUpload.bind(this),
+                } as SFUploadWidgetSchema,
+              },
+            },
+          },
+          email: {
+            type: 'string',
+            title: 'Email',
+            format: 'email',
+          },
+          mobile_phone: {
+            type: 'string',
+            title: 'Mobile',
+            minLength: 9,
+            maxLength: 20,
+            pattern: '[0-9]+',
+          },
+          password: {
+            type: 'string',
+            title: 'Password',
+            minLength: 8,
+            ui: {
+              type: 'password',
+            },
+          },
+          password_confirmation: {
+            type: 'string',
+            title: 'Confirm password',
+            minLength: 8,
+            ui: {
+              type: 'password',
+              change: (val) => {
+                const password = this.sf.getValue('/attributes/password');
+                const confirmPasswordProp = this.sf.getProperty('/attributes/password_confirmation');
+                if (val && val !== password) {
+                  confirmPasswordProp!.setParentAndPlatErrors([{
+                    keyword: 'not_match',
+                    message: 'Not match with password',
+                  }], '');
+                }
+              },
+            } as SFStringWidgetSchema,
+          },
+        },
+        required: this.requiredAttrs,
       },
     },
-    required: ['first_name', 'last_name', 'email'],
   };
 
   constructor(
     private msgSrv: NzMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    public http: _HttpClient,
+    private adminApi: AdminApi,
+    private cdr: ChangeDetectorRef,
   ) {
   }
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.params.id;
+    this.id = this.route.snapshot.params.id.toString();
 
     if (this.id === 'new') {
-      this.title = 'New Admin';
-      this.fetchTenantList();
+      this.title = this.subTitle = 'Add Admin';
+      this.admin = this.adminApi.new();
+      this.admin.attributes = new Admin().attributes;
     } else {
       this.title = `Edit Admin`;
       this.subTitle = `ID: ${this.id}`;
-      this.fetchAdminById(this.id);
-    }
-  }
 
-  submit(value: any): void {
-    if (this.id === 'new') {
-      this.http.post(`/admin/admins`, {data: value})
-        .subscribe(res => {
-          this.msgSrv.success('Created successfully !');
-          this.router.navigateByUrl(`/admin/list`);
-        });
-    } else {
-      this.http.put(`/admin/admins/${this.id}`, {data: value})
-        .subscribe(res => {
-          this.msgSrv.success('Updated successfully !');
-          this.router.navigateByUrl(`/admin/list`);
+      this.fetchAdminById(this.id)
+        .subscribe(() => {
+          this.setAttrValues();
+          this.updateUIForEditForm();
         });
     }
   }
 
-  fetchAdminById(id: number | string): void {
-    this.http.get(`/admin/admins/${id}`)
-      .pipe(untilDestroyed(this))
+  submit(formData: any): void {
+    this.admin.attributes = _assign({}, this.admin.attributes, _omit(formData.attributes, ['image']));
+
+    this.admin
+      .save()
+      .pipe(
+        untilDestroyed(this),
+        tap(() => {
+          this.loading = true;
+          this.cdr.detectChanges();
+        }),
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        }), // Success or not, turn off loading
+      )
       .subscribe(res => {
-        this.formData = _omit(res.data, ['tenant_id']);
-        this.schema.properties!.tenant_id.default = res.data.tenant.display_name;
-        this.schema.properties!.tenant_id.readOnly = true;
-        this.schema.properties!.email.readOnly = true;
-        this.sf.refreshSchema();
+        this.msgSrv.success('Updated successfully !');
+        this.router.navigateByUrl(`/admin/list`);
+      }, (errRes: ErrorResponse) => {
+        _each(errRes.errors, (errorObj: JsonApiError) => {
+          const formProp = this.sf.getProperty('/attributes/' + errorObj.field);
+
+          if (formProp) {
+            formProp.setParentAndPlatErrors([{ keyword: 'server', message: errorObj.detail }], '');
+          }
+        });
       });
   }
 
-  fetchTenantList(): void {
-    this.http.get('/admin/tenants', {
-        'page[size]': 'all',
-      })
-      .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        const tenantList = _map(res.data, (item) => {
-          return { label: item.display_name, value: item.id };
-        });
-        this.schema.properties!.tenant_id.enum = tenantList;
-        this.schema.properties!.tenant_id.default = _first(tenantList)!.value;
-        this.sf.refreshSchema();
-      });
+  fetchAdminById(id: string): Observable<Admin> {
+    return this.adminApi.get(id)
+      .pipe(
+        untilDestroyed(this),
+        filter(res => res.loaded),
+        tap((res) => this.admin = res),
+      );
+  }
+
+  private updateUIForEditForm(): void {
+    // Set email as readonly field
+    this.sf.getProperty('/attributes/email')!.schema.readOnly = true;
+
+    // Remove the password fields as we dont' want admin to accidentally update password
+    this.sf.getProperty('/attributes')!.schema.required = _omit(this.requiredAttrs, ['password', 'password_confirmation']) as string[];
+    this.sf.getProperty('/attributes/password')?.setVisible(false);
+    this.sf.getProperty('/attributes/password_confirmation')?.setVisible(false);
+  }
+
+  private setAttrValues() {
+    _each(this.admin.attributes, (attrValue: any, attrKey) => {
+      const formProp = this.sf.getProperty(`/attributes/${attrKey}`);
+
+      if (formProp) {
+        // Set default value, will be used when click on "Reset" button
+        formProp.schema.default = attrValue;
+
+        // Set value for the form fields, will use when "Submit" form
+        formProp.resetValue(attrValue, true);
+      }
+
+      if (attrKey === 'image' && attrValue) {
+        const imageUploaderProp = this.sf.getProperty('/attributes/image/uploader');
+        imageUploaderProp!.schema.enum = [
+          { url: `${assetHost.baseUrl}${_get(attrValue, 'url')}` },
+        ];
+        imageUploaderProp?.widget.reset(null);
+      }
+    });
+  }
+
+  private beforeUpload(file: NzUploadFile, fileList: NzUploadFile[]): boolean | Observable<boolean> {
+    const imageUploaderProp = this.sf.getProperty('/attributes/image/uploader');
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file as any);
+    reader.onload = (e: any) => {
+      const base64String = e.target.result;
+      if (this.admin.attributes.image) {
+        this.admin.attributes.image.data = base64String;
+      } else {
+        this.admin.attributes.image = { data: base64String };
+      }
+
+      imageUploaderProp!.schema.enum = [{ url: base64String }];
+      imageUploaderProp?.widget.reset(null);
+    };
+
+    return false; // Cancel automatic upload
   }
 }

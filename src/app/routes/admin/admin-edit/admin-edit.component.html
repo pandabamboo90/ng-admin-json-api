@@ -1,14 +1,16 @@
 <page-header [title]="title">
-  {{subTitle}}
+  <nz-breadcrumb>
+    <nz-breadcrumb-item><a [routerLink]="'/admin/list'">Users</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item>{{subTitle}}</nz-breadcrumb-item>
+  </nz-breadcrumb>
 </page-header>
 
 <nz-card>
   <sf #sf
-    mode="edit"
-    [formData]="formData"
-    [noColon]="true"
-    [schema]="schema"
-    (formSubmit)="submit($event)"
+      mode="edit"
+      [schema]="schema"
+      [loading]="loading"
+      (formSubmit)="submit($event)"
   >
   </sf>
 </nz-card>

@@ -1,12 +1,12 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
-import { UserUserEditComponent } from './user-edit/user-edit.component';
-import { UserUserListComponent } from './user-list/user-list.component';
+import { UserEditComponent } from './user-edit/user-edit.component';
+import { UserListComponent } from './user-list/user-list.component';
 import { UserRoutingModule } from './user-routing.module';
 
 const COMPONENTS: Type<void>[] = [
-  UserUserListComponent,
-  UserUserEditComponent,
+  UserListComponent,
+  UserEditComponent,
 ];
 
 @NgModule({

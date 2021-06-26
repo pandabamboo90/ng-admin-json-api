@@ -2,12 +2,12 @@ import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { AdminRoutingModule } from './admin-routing.module';
-import { AdminAdminListComponent } from './admin-list/admin-list.component';
-import { AdminAdminEditComponent } from './admin-edit/admin-edit.component';
+import { AdminListComponent } from './admin-list/admin-list.component';
+import { AdminEditComponent } from './admin-edit/admin-edit.component';
 
 const COMPONENTS: Type<void>[] = [
-  AdminAdminListComponent,
-  AdminAdminEditComponent];
+  AdminListComponent,
+  AdminEditComponent];
 
 @NgModule({
   imports: [
