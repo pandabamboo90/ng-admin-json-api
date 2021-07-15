@@ -25,6 +25,18 @@
           "link": "/user/list"
         }
       ]
+    },
+    {
+      "text": "Admin settings",
+      "group": true,
+      "hideInBreadcrumb": false,
+      "children": [
+        {
+          "text": "Roles & Permissions",
+          "icon": "anticon-user",
+          "link": "/role-permission/edit"
+        }
+      ]
     }
   ]
 }

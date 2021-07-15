@@ -1,0 +1,48 @@
+<page-header title="Permission List" [action]="phActionTpl">
+  <ng-template #phActionTpl>
+    <button (click)="save()" nz-button nzType="primary" [nzLoading]="loading">Save</button>
+  </ng-template>
+</page-header>
+
+<nz-card>
+  <nz-table nzTemplateMode
+            nzBordered
+            nzSize="small"
+            [nzLoading]="loading"
+            [nzFrontPagination]="false">
+    <thead>
+    <tr>
+      <th [rowSpan]="2" nzAlign="center">#</th>
+      <th [rowSpan]="2">Display name</th>
+      <th [rowSpan]="2">Description</th>
+      <th *ngFor="let r of roles" nzAlign="center">
+        {{ r.attributes.display_name }}
+      </th>
+    </tr>
+    <tr>
+      <th *ngFor="let r of roles" nzAlign="center">
+        <label nz-checkbox
+               [(ngModel)]="chkBoxesStates[r.id].allChecked"
+               [nzIndeterminate]="chkBoxesStates[r.id].indeterminate"
+               (nzCheckedChange)="onCheckAllChange(r.id, $event)">
+          All
+        </label>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let p of permissions">
+      <td nzAlign="center">{{ p.id }}</td>
+      <td>{{ p.attributes.display_name }}</td>
+      <td>{{ p.attributes.description }}</td>
+      <td *ngFor="let r of roles"
+          nzAlign="center">
+        <label nz-checkbox
+               [(ngModel)]="chkBoxesStates[r.id].permissions[p.id].checked"
+               (nzCheckedChange)="onCheckSingleChange(r.id, p.id, $event)">
+        </label>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

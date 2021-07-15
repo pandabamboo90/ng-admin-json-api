@@ -22,6 +22,7 @@ const routes: Routes = [
       { path: 'admin', loadChildren: () => import('./admin/admin.module').then((m) => m.AdminModule) },
       { path: 'user', loadChildren: () => import('./user/user.module').then((m) => m.UserModule) },
       { path: 'account', loadChildren: () => import('./account/account.module').then((m) => m.AccountModule) },
+      { path: 'role-permission', loadChildren: () => import('./role-permission/role-permission.module').then((m) => m.RolePermissionModule) },
     ],
   },
   // 空白布局

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { User } from '@core';
-import { Service, Resource, DocumentResource } from 'ngx-jsonapi';
+import { Permission, User } from '@core';
+import { Service, Resource, DocumentResource, DocumentCollection } from 'ngx-jsonapi';
 
 export class Role extends Resource {
   attributes = {
@@ -11,7 +11,8 @@ export class Role extends Resource {
   };
 
   relationships: any = {
-    user: new DocumentResource<User>()
+    user: new DocumentResource<User>(),
+    permissions: new DocumentCollection<Permission>(),
   };
 }
 

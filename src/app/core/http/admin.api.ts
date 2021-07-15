@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Role } from '@src/app/core';
-import { DocumentCollection, Resource, Service } from 'ngx-jsonapi';
+import { Resource, Service } from 'ngx-jsonapi';
 
 export class Admin extends Resource {
   attributes = {
@@ -18,7 +17,7 @@ export class Admin extends Resource {
   };
 
   get isActive() {
-    return !this.attributes.deleted_at
+    return !this.attributes.deleted_at;
   }
 }
 

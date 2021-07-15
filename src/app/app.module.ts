@@ -12,6 +12,8 @@ import {
   RoleApi,
   StartupService,
   UserApi,
+  PermissionApi,
+  RolePermissionApi,
 } from '@core';
 import { DelonAuthModule } from '@delon/auth';
 import { DELON_LOCALE, en_US as delonLang } from '@delon/theme';
@@ -58,7 +60,7 @@ const APP_INIT_PROVIDES = [
 
 const JSON_API_PROVIDES = [
   NgxJsonapiRegisterService,
-  UserApi, RoleApi, AdminApi,
+  UserApi, AdminApi, RoleApi, PermissionApi, RolePermissionApi
 ];
 
 @NgModule({
